@@ -29,6 +29,13 @@ namespace team4_game_engine::engine::mathematics {
 		    z = _z;
 	    }
 
+
+        virtual void Write(serialization::OutputMemoryStream& stream);
+        virtual void Read(serialization::InputMemoryStream& stream);
+        // Cast Operator
+        operator glm::vec3() const { return glm::vec3(x, y, z); };
+        operator ImVec2 () const { return ImVec2(x, y); };
+
         /*
         Multiplies this Vector with a given scalar and return the result in a new Vector
        */
@@ -96,13 +103,17 @@ namespace team4_game_engine::engine::mathematics {
         virtual std::string GetVectorData();
         // Random Vector
         static Vector3D Random(float xMin, float xMax, float yMin, float yMax, float zMin, float zMax);
+        /*
+        make a Orthonormal Basis with the given Vector
+        */
+        static void makeOrthonormalBasis(Vector3D* u, Vector3D* v, Vector3D* w);
 
+        static Vector3D localToWorld(const Vector3D& local, const Matrix4& transform);
 
-        virtual void Write(serialization::OutputMemoryStream& stream);
+        static Vector3D worldToLocal(const Vector3D& world, const Matrix4& transform);
 
-        virtual void Read(serialization::InputMemoryStream& stream);
-        // Cast Operator
-        operator glm::vec3() const { return glm::vec3(x, y, z); };
-        operator ImVec2 () const { return ImVec2(x, y); };
+        static Vector3D localToWorldDirn(const Vector3D& local, const Matrix4& transform);
+
+        static Vector3D worldToLocalDirn(const Vector3D& world, const Matrix4& transform);
     };
 }

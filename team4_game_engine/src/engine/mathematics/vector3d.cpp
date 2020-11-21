@@ -1,10 +1,23 @@
 #pragma once
 #include <team4_game_engine/engine/mathematics/vector3d.hpp>
+#include <team4_game_engine/engine/mathematics/vector4.hpp>
 #include <iostream>
 #include <sstream>
 #include <random>
 
 namespace team4_game_engine::engine::mathematics {
+    void Vector3D::Write(serialization::OutputMemoryStream& stream) {
+        stream.Write(x);
+        stream.Write(y);
+        stream.Write(z);
+    }
+
+    void Vector3D::Read(serialization::InputMemoryStream& stream) {
+        x = stream.Read<float>();
+        y = stream.Read<float>();
+        z = stream.Read<float>();
+    }
+
     Vector3D Vector3D::scalarMultiplication(float scalar) {
         return Vector3D(x * scalar, y * scalar, z * scalar);
     }
@@ -114,16 +127,19 @@ namespace team4_game_engine::engine::mathematics {
         return Vector3D(x(e2), y(e2), z(e2));
     }
 
-
-    void Vector3D::Write(serialization::OutputMemoryStream& stream) {
-        stream.Write(x);
-        stream.Write(y);
-        stream.Write(z);
+    Vector3D Vector3D::localToWorld(const Vector3D& local, const Matrix4& transform) {
+        return transform.transform(local);
     }
 
-    void Vector3D::Read(serialization::InputMemoryStream& stream) {
-        x = stream.Read<float>();
-        y = stream.Read<float>();
-        z = stream.Read<float>();
+    Vector3D Vector3D::worldToLocal(const Vector3D& world, const Matrix4& transform) {
+        return transform.transformInverse(world);
+    }
+
+    Vector3D Vector3D::localToWorldDirn(const Vector3D& local, const Matrix4& transform) {
+        return transform.transformDirection(local);
+    }
+
+    Vector3D Vector3D::worldToLocalDirn(const Vector3D& world, const Matrix4& transform) {
+        return transform.transformInverseDirection(world);
     }
 }
