@@ -222,29 +222,26 @@ namespace team4_game_engine::engine::mathematics {
 		);
 	}
 
+	Vector3D Matrix4::localToWorld(const Vector3D& local, const Matrix4& transform) {
+		return transform.transform(local);
+	}
+
+	Vector3D Matrix4::worldToLocal(const Vector3D& world, const Matrix4& transform) {
+		return transform.transformInverse(world);
+	}
+
+	Vector3D Matrix4::localToWorldDirn(const Vector3D& local, const Matrix4& transform) {
+		return transform.transformDirection(local);
+	}
+
+	Vector3D Matrix4::worldToLocalDirn(const Vector3D& world, const Matrix4& transform) {
+		return transform.transformInverseDirection(world);
+	}
+
 	void Matrix4::printMatrix4() {
 		std::cout << "m1 = " << data[0] << " m2 = " << data[1] << " m3 = " << data[2] << " m4 = " << data[3] << std::endl;
 		std::cout << "m5 = " << data[4] << " m6 = " << data[5] << " m7 = " << data[6] << " m8 = " << data[7] << std::endl;
 		std::cout << "m9 = " << data[8] << " m10 = " << data[9] << " m11 = " << data[10] << " m12 = " << data[11] << std::endl;
 		std::cout << "m13 = " << 0 << " m14 = " << 0 << " m15 = " << 0 << " m16 = " << 1 << std::endl;
 	}
-
-
-	/*
-	Vector3D localToWorld(const Vector3D& local, const Matrix4& transform) {
-		return transform.transform(local);
-	}
-
-	Vector3D worldToLocal(const Vector3D& world, const Matrix4& transform) {
-		return transform.transformInverse(world);
-	}
-
-	Vector3D localToWorldDirn(const Vector3D& local, const Matrix4& transform) {
-		return transform.transformDirection(local);
-	}
-
-	Vector3D worldToLocalDirn(const Vector3D& world, const Matrix4& transform) {
-		return transform.transformInverseDirection(world);
-	}
-	*/
 }

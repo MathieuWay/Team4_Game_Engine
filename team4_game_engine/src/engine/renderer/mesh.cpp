@@ -60,8 +60,7 @@ namespace team4_game_engine::renderer {
 				case components::ComponentType::Transform: {
 					//Translation
 					components::Position pos = entity->Position();
-					glm::mat4 translationMatrix = glm::mat4(1.0f);
-					translationMatrix = glm::translate(translationMatrix, glm::vec3(pos.local.x, pos.local.y, pos.local.z));
+					glm::mat4 translationMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(pos.local.x, pos.local.y, pos.local.z));
 
 					//Rotation
 					components::Rotation rot = entity->Rotation();
@@ -69,15 +68,9 @@ namespace team4_game_engine::renderer {
 
 					//Scale
 					components::Scale scale = entity->Scale();
-					glm::mat4 scaleMatrix = glm::mat4(1.0f);
-					scaleMatrix = glm::scale(scaleMatrix, glm::vec3(scale.x, scale.y, scale.z));
+					glm::mat4 scaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(scale.x, scale.y, scale.z));
 
 					glm::mat4 transform = translationMatrix * rotationMatrix * scaleMatrix;
-					/*const float* ptr = (const float*)glm::value_ptr(transform);
-					for (int i = 0; i < 16; i++) {
-						float value = ptr[i];
-						instancesData.Write(value);
-					}*/
 					instancesData.Write((char*)glm::value_ptr(transform), sizeof(glm::mat4));
 					break; }
 				case components::ComponentType::Position:

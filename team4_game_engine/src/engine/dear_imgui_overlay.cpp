@@ -48,19 +48,27 @@ namespace team4_game_engine::debug {
 		ImGuizmo::ViewManipulate(&camera.view[0][0], this->distance, ImVec2(0, 0), ImVec2(io.DisplaySize.x / 7.5, io.DisplaySize.x / 7.5), IM_COL32(0, 0, 0, 75));
 
 
+		if (ImGui::IsKeyPressed(90))
+			mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
+		if (ImGui::IsKeyPressed(69))
+			mCurrentGizmoOperation = ImGuizmo::ROTATE;
+		if (ImGui::IsKeyPressed(82)) // r Key
+			mCurrentGizmoOperation = ImGuizmo::SCALE;
 		for (auto& entity : selected) {
-			glm::mat4 matrice = glm::mat4(1.0f);
 			Position& position = world.Registry().get<Position>(entity);
-			Rotation rotation = world.Registry().get<Rotation>(entity);
+			Rotation& rotation = world.Registry().get<Rotation>(entity);
+			Scale& scale = world.Registry().get<Scale>(entity);
+			glm::mat4 matrice = glm::mat4(1.0f);
 			matrice = glm::translate(matrice, glm::vec3(position.local.x, position.local.y, position.local.z));
 			matrice = matrice * glm::toMat4(glm::quat(rotation.w, rotation.i, rotation.j, rotation.k));
+			matrice = glm::scale(matrice, glm::vec3(scale.x, scale.y, scale.z));
 			ImGuizmo::Manipulate(&camera.view[0][0], &projection[0][0], mCurrentGizmoOperation , mCurrentGizmoMode, &matrice[0][0], NULL, NULL, NULL, NULL);
 			float matrixTranslation[3], matrixRotation[3], matrixScale[3];
 			ImGuizmo::DecomposeMatrixToComponents(&matrice[0][0], matrixTranslation, matrixRotation, matrixScale);
-			position.local.x = matrixTranslation[0];
-			position.local.y = matrixTranslation[1];
-			position.local.z = matrixTranslation[2];
-
+			position.local = Vector3D(matrixTranslation[0], matrixTranslation[1], matrixTranslation[2]);
+			glm::quat quat = glm::quat(glm::vec3(matrixRotation[0], matrixRotation[1], matrixRotation[2]));
+			rotation = Quaternion(quat.w, quat.x, quat.y, quat.z);
+			scale = { matrixScale[0], matrixScale[1], matrixScale[2] };
 		}
 
 		//ImGui Debug Window
