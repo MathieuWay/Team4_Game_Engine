@@ -1,5 +1,7 @@
 #pragma once
 #include <team4_game_engine/engine/mathematics/vector3d.hpp>
+#include <team4_game_engine/engine/mathematics/matrix3.hpp>
+#include <team4_game_engine/engine/mathematics/matrix4.hpp>
 using namespace team4_game_engine::engine::mathematics;
 #include <team4_game_engine/components/position.hpp>
 #include <team4_game_engine/components/colliders/collider.hpp>
@@ -18,11 +20,17 @@ namespace team4_game_engine::components {
 		Vector3D velocity;
 		Vector3D angularVelocity;
 		Vector3D acceleration;
-		Vector3D accumulateForces;
+		Vector3D accumulateLinearForces;
+		Vector3D accumulateAngularForces;
 		float inverseMass;
 		float mass;
 		float restitutionCoef;
 		RestitutionCombine restitutionCombine;
+
+
+		Matrix4 transforMatrix;
+		Matrix3 inverseInertiaTensor;
+		Matrix3 inverseInertiaTensorWorld;
 
 		bool isKinematic;
 
@@ -30,12 +38,18 @@ namespace team4_game_engine::components {
 		bool useGravity;
 		engine::mathematics::Vector3D gravity;
 
-		float drag; // aka damping
+		float linearDrag; // aka damping
+		float angularDrag; // aka damping
+
+		bool isAwake = false;
 
 		RigidBody(Collider* col, float _mass, float _restitution, float _drag, engine::mathematics::Vector3D _gravity, bool _useGravity = true) :
 			collider(col),
 			restitutionCoef(_restitution),
-			drag(_drag),
+			transforMatrix(Matrix4()),
+			inverseInertiaTensorWorld(Matrix3()),
+			linearDrag(_drag),
+			angularDrag(0),
 			gravity(_gravity),
 			isKinematic(false),
 			useGravity(_useGravity),
@@ -99,7 +113,7 @@ namespace team4_game_engine::components {
 				ImGui::DragFloat3("Velocity", &velocity.x);
 
 				// Acceleration
-				ImGui::DragFloat3("Acceleration", &accumulateForces.x);
+				ImGui::DragFloat3("Acceleration", &accumulateLinearForces.x);
 			}
 		};
 	};

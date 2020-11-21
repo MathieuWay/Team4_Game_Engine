@@ -200,7 +200,7 @@ namespace team4_game_engine::engine {
 			// https://learnopengl.com/img/getting-started/vertex_array_objects.png
 			// Create Vertex Array
 			const BufferLayout cube_Vertexlayout = { {ShaderDataType::Float3, "a_Pos", components::ComponentType::NotInstanced}, {ShaderDataType::Float3, "a_Color", components::ComponentType::NotInstanced} };
-			const BufferLayout cube_Instancelayout = { {ShaderDataType::Float3, "a_Offset", components::ComponentType::Position}, {ShaderDataType::Float3, "a_Scale", components::ComponentType::Scale} };
+			const BufferLayout cube_Instancelayout = { {ShaderDataType::Mat4, "model", components::ComponentType::Transform}};
 			Shader* cube_shader = new Shader("shader.vs", "shader.fs");
 			// Push VAO to VAO List
 			Renderer3D::Instance().ms_meshs.push_back(std::make_shared<Mesh>(

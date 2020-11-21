@@ -34,7 +34,7 @@ namespace team4_game_engine::components {
 
 		void OnInspectorGUI() {
 			if (ImGui::CollapsingHeader("Position")) {
-				ImGui::DragFloat3("Local", &local.x, 0.1f);
+				ImGui::DragFloat3("Local Position", &local.x, 0.1f);
 			}
 		};
 	};

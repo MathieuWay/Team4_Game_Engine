@@ -4,6 +4,7 @@ namespace team4_game_engine::components {
 	enum class ComponentType {
 		NotInstanced,
 		Name,
+		Transform,
 		Position,
 		Rotation,
 		Scale,

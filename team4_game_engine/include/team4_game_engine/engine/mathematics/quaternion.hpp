@@ -1,4 +1,8 @@
 #pragma once
+namespace team4_game_engine::serialization {
+	class OutputMemoryStream;
+	class InputMemoryStream;
+}
 namespace team4_game_engine::engine::mathematics {
 	class Vector3D;
 	class Quaternion {
@@ -85,5 +89,11 @@ namespace team4_game_engine::engine::mathematics {
 		ajoute le vecteur donne en argument au quaternion, multiplie par le scalaire en argument
 		*/
 		void addScaledVector(const Vector3D& vector, float scale);
+
+		void Write(serialization::OutputMemoryStream& stream);
+
+		void Read(serialization::InputMemoryStream& stream);
+
+		void OnInspectorGUI();
 	};
 }

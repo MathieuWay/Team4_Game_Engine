@@ -6,7 +6,6 @@
 #include <team4_game_engine/engine/renderer/buffer_layout.hpp>
 #include <team4_game_engine/engine/renderer/shader.hpp>
 #include <team4_game_engine/serialization/output_memory_stream.hpp>
-
 namespace team4_game_engine::renderer {
 	struct Draw_Mode {
 		int mode;

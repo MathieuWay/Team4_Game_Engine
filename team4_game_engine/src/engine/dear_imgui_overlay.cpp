@@ -53,7 +53,7 @@ namespace team4_game_engine::debug {
 			Position& position = world.Registry().get<Position>(entity);
 			Rotation rotation = world.Registry().get<Rotation>(entity);
 			matrice = glm::translate(matrice, glm::vec3(position.local.x, position.local.y, position.local.z));
-			matrice = matrice * glm::toMat4(glm::quat(rotation.x, rotation.y, rotation.z, rotation.w));
+			matrice = matrice * glm::toMat4(glm::quat(rotation.w, rotation.i, rotation.j, rotation.k));
 			ImGuizmo::Manipulate(&camera.view[0][0], &projection[0][0], mCurrentGizmoOperation , mCurrentGizmoMode, &matrice[0][0], NULL, NULL, NULL, NULL);
 			float matrixTranslation[3], matrixRotation[3], matrixScale[3];
 			ImGuizmo::DecomposeMatrixToComponents(&matrice[0][0], matrixTranslation, matrixRotation, matrixScale);
@@ -333,7 +333,7 @@ namespace team4_game_engine::debug {
 				if (showDebugText) {
 					std::string text = "Position " + position.local.GetVectorData() + "\n";
 					text += "Velocity " + rb.velocity.GetVectorData() + "\n";
-					text += "Acceleration " + rb.accumulateForces.GetVectorData() + "\n";
+					text += "Acceleration " + rb.accumulateLinearForces.GetVectorData() + "\n";
 					//text += "Mass " + std::to_string(particule->get()->GetMass()) + "\n";
 					//text += "Radius " + std::to_string(particule->get()->GetRadius()) + "\n";
 					//text += "Restitution " + std::to_string(particule->get()->GetRestitutionCoef()) + "\n";

@@ -13,6 +13,7 @@ namespace team4_game_engine::engine::mathematics {
         std::uniform_real_distribution<> randfloat(min, max);
         return randfloat(e2);
     }
+    class Matrix4;
     class Vector3D {
     public:
 	    float x, y, z;

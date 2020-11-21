@@ -62,7 +62,7 @@ namespace team4_game_engine::renderer::shape {
 		}
 
 		const BufferLayout sphere_Vertexlayout = { {ShaderDataType::Float3, "a_Pos", components::ComponentType::NotInstanced}, };
-		const BufferLayout sphere_Instancelayout = { {ShaderDataType::Float3, "a_Color", components::ComponentType::Color}, {ShaderDataType::Float3, "a_Offset", components::ComponentType::Position}, {ShaderDataType::Float3, "a_Scale", components::ComponentType::Scale} };
+		const BufferLayout sphere_Instancelayout = { {ShaderDataType::Mat4, "model", components::ComponentType::Transform} };
 		Shader* sphere_shader = new Shader("shader.vs", "shader.fs");
 		// Push VAO to VAO List
 		return new Mesh(

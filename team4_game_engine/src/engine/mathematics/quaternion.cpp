@@ -1,5 +1,7 @@
 #include <team4_game_engine/engine/mathematics/quaternion.hpp>
 #include <team4_game_engine/engine/mathematics/vector3d.hpp>
+#include <team4_game_engine/serialization/input_memory_stream.hpp>
+#include <team4_game_engine/serialization/output_memory_stream.hpp>
 #include <iostream>
 
 namespace team4_game_engine::engine::mathematics {
@@ -150,5 +152,23 @@ namespace team4_game_engine::engine::mathematics {
 		data[1] = i;
 		data[2] = j;
 		data[3] = k;
+	}
+
+	void Quaternion::Write(serialization::OutputMemoryStream& stream) {
+		stream.Write(w);
+		stream.Write(i);
+		stream.Write(j);
+		stream.Write(k);
+	}
+	void Quaternion::Read(serialization::InputMemoryStream& stream) {
+		w = stream.Read<float>();
+		i = stream.Read<float>();
+		j = stream.Read<float>();
+		k = stream.Read<float>();
+	}
+	void Quaternion::OnInspectorGUI() {
+		if (ImGui::CollapsingHeader("Rotation")) {
+			ImGui::DragFloat4("Local Rotation", &w, 0.1f);
+		}
 	}
 }

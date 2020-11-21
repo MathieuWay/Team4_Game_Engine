@@ -2,14 +2,14 @@
 #include <glad/glad.h>
 
 #include <team4_game_engine/engine/mathematics/vector3d.hpp>
+#include <team4_game_engine/engine/mathematics/matrix4.hpp>
 using namespace team4_game_engine::engine::mathematics;
 
 #include <team4_game_engine/components/position.hpp>
 #include <team4_game_engine/components/color.hpp>
 #include <team4_game_engine/engine/engine.hpp>
 #include <team4_game_engine/engine/world.hpp>
-// #include "../GameObject.h"
-
+#include <glm/gtx/quaternion.hpp>
 namespace team4_game_engine::renderer {
 	Mesh::Mesh(std::string name, std::vector<float> vertexData, std::vector<uint32_t> indices, const BufferLayout vertexLayout, const BufferLayout instanceLayout, Shader* shader, int drawMode) : m_name(name), /*instanceReferences(0),*/ m_instanceLayout(instanceLayout), program(shader), m_drawMode(drawMode)
 	{
@@ -57,6 +57,29 @@ namespace team4_game_engine::renderer {
 			for (auto element : m_instanceLayout) {
 				switch (element.componentType)
 				{
+				case components::ComponentType::Transform: {
+					//Translation
+					components::Position pos = entity->Position();
+					glm::mat4 translationMatrix = glm::mat4(1.0f);
+					translationMatrix = glm::translate(translationMatrix, glm::vec3(pos.local.x, pos.local.y, pos.local.z));
+
+					//Rotation
+					components::Rotation rot = entity->Rotation();
+					glm::mat4 rotationMatrix = glm::toMat4(glm::quat(rot.w, rot.i, rot.j, rot.k));
+
+					//Scale
+					components::Scale scale = entity->Scale();
+					glm::mat4 scaleMatrix = glm::mat4(1.0f);
+					scaleMatrix = glm::scale(scaleMatrix, glm::vec3(scale.x, scale.y, scale.z));
+
+					glm::mat4 transform = translationMatrix * rotationMatrix * scaleMatrix;
+					/*const float* ptr = (const float*)glm::value_ptr(transform);
+					for (int i = 0; i < 16; i++) {
+						float value = ptr[i];
+						instancesData.Write(value);
+					}*/
+					instancesData.Write((char*)glm::value_ptr(transform), sizeof(glm::mat4));
+					break; }
 				case components::ComponentType::Position:
 					entity->Position().Write(instancesData);
 					break;
