@@ -9,6 +9,8 @@ set(TEAM4_GAME_ENGINE_HEADERS
     include/team4_game_engine/engine/entity.hpp
     
     # renderer
+    include/team4_game_engine/engine/renderer/renderer3d.hpp
+    include/team4_game_engine/engine/renderer/shape.hpp
     include/team4_game_engine/engine/renderer/mesh.hpp
     include/team4_game_engine/engine/renderer/shader.hpp
     include/team4_game_engine/engine/renderer/buffer_layout.hpp
@@ -16,6 +18,11 @@ set(TEAM4_GAME_ENGINE_HEADERS
 
     # Mathematics
     include/team4_game_engine/engine/mathematics/vector3d.hpp
+    include/team4_game_engine/engine/mathematics/quaternion.hpp
+    include/team4_game_engine/engine/mathematics/test_quaternion.hpp
+    include/team4_game_engine/engine/mathematics/matrix3.hpp
+    include/team4_game_engine/engine/mathematics/matrix4.hpp
+    include/team4_game_engine/engine/mathematics/test_matrix4.hpp
 
     # systems
     include/team4_game_engine/systems/system.hpp
@@ -29,6 +36,7 @@ set(TEAM4_GAME_ENGINE_HEADERS
     include/team4_game_engine/components/components.hpp
     include/team4_game_engine/components/name.hpp
     include/team4_game_engine/components/parent.hpp
+    include/team4_game_engine/components/children.hpp
     include/team4_game_engine/components/position.hpp
     include/team4_game_engine/components/model.hpp
     include/team4_game_engine/components/color.hpp
@@ -62,8 +70,7 @@ set(TEAM4_GAME_ENGINE_HEADERS
     include/team4_game_engine/serialization/output_memory_stream.hpp
 
     # Singleton
-    include/team4_game_engine/engine/scene_view.hpp
-    include/team4_game_engine/engine/renderer/renderer3d.hpp "include/team4_game_engine/components/children.hpp"  "include/team4_game_engine/engine/renderer/shape.hpp" "include/team4_game_engine/engine/primitive.hpp")
+    include/team4_game_engine/engine/scene_view.hpp)
 
 set(TEAM4_GAME_ENGINE_SOURCES
     # Engine
@@ -94,7 +101,10 @@ set(TEAM4_GAME_ENGINE_SOURCES
     src/engine/physics/forces_generators/stiff_spring.cpp
     
     src/engine/dear_imgui_overlay.cpp
-    src/engine/mathematics/vector3d.cpp   )
+    src/engine/mathematics/vector3d.cpp
+    src/engine/mathematics/quaternion.cpp
+    src/engine/mathematics/matrix3.cpp
+    src/engine/mathematics/matrix4.cpp)
 
 add_library(team4_game_engine STATIC ${TEAM4_GAME_ENGINE_HEADERS} ${TEAM4_GAME_ENGINE_SOURCES})
 
