@@ -17,10 +17,10 @@ namespace team4_game_engine::physics {
 
 	float Collision::calculateSeparateVelocity() const {
 		// on recupere la vitesse de la premiere particule
-		Vector3D rVelocity = rigidBodies[0]->velocity;
+		Vector3D rVelocity = rigidBodies[0]->linearVelocity;
 
 		if (rigidBodies[1]) { // si la collision à lieu avec une autre particule on soustrait la vitesse de la premiere particule par la deuxieme 
-			rVelocity = rVelocity.subVector(rigidBodies[1]->velocity);
+			rVelocity = rVelocity.subVector(rigidBodies[1]->linearVelocity);
 		}
 		// on renvoi le produit scalaire de la vitesse calulee avec la Normal au point de contact
 		return rVelocity.scalarProduct(contactNormal);
@@ -63,19 +63,19 @@ namespace team4_game_engine::physics {
 
 		// calcul l'impulsion à appliquer aux particules 
 		Vector3D impulseMass = contactNormal.scalarMultiplication(deltaVelocity / sumInverseMass);
-		Vector3D impulseP0 = rigidBodies[0]->velocity.sumVector(impulseMass.scalarMultiplication(rigidBodies[0]->inverseMass));
+		Vector3D impulseP0 = rigidBodies[0]->linearVelocity.sumVector(impulseMass.scalarMultiplication(rigidBodies[0]->inverseMass));
 		//std::cout << "p0 :" << std::endl;
 		//impulseP0.printVector();
 		// applique l'impulsion aux particules proportionnelement à l'inverse de leur masse
 		if(!rigidBodies[0]->isKinematic)
-			rigidBodies[0]->velocity = impulseP0;
+			rigidBodies[0]->linearVelocity = impulseP0;
 
 		if (rigidBodies[1] != NULL) {
-			Vector3D impulseP1 = rigidBodies[1]->velocity.sumVector(impulseMass.scalarMultiplication(-rigidBodies[1]->inverseMass));
+			Vector3D impulseP1 = rigidBodies[1]->linearVelocity.sumVector(impulseMass.scalarMultiplication(-rigidBodies[1]->inverseMass));
 			//std::cout << "p1 :" << std::endl;
 			//impulseP1.printVector();
 			if (!rigidBodies[1]->isKinematic)
-				rigidBodies[1]->velocity = impulseP1;
+				rigidBodies[1]->linearVelocity = impulseP1;
 		}
 	}
 

@@ -17,7 +17,7 @@ namespace team4_game_engine::components {
 	struct RigidBody {
 	public:
 		Collider* collider;
-		Vector3D velocity;
+		Vector3D linearVelocity;
 		Vector3D angularVelocity;
 		Vector3D acceleration;
 		Vector3D accumulateLinearForces;
