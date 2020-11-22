@@ -24,6 +24,7 @@ namespace team4_game_engine::systems {
 	struct State{
 		entt::entity entity;
 		Position& pos;
+		Rotation& rot;
 		Scale& scale;
 		RigidBody* rb;
 	};
@@ -32,7 +33,7 @@ namespace team4_game_engine::systems {
 		CollisionSystemImpl(int resolveIteration) : resolver(resolveIteration){
 		}
 		void Update(std::chrono::milliseconds deltatime, engine::World& world) {
-			if (!Physics::doPhysicsStep && !Physics::doNextStep) return;
+			if (!Physics::doCollisionStep && !Physics::doNextStep) return;
 			if (Physics::useFixedDeltatime) {
 				m_totalMilli += deltatime;
 				if (m_totalMilli < 1s) return;
@@ -45,20 +46,22 @@ namespace team4_game_engine::systems {
 			}
 			collisions.clear();
 
-			auto view = world.Registry().view<Position, Scale, RigidBody>();
+			auto view = world.Registry().view<Position, Rotation, Scale, RigidBody>();
 			for (auto it = view.begin(); it != view.end(); it++){
 				Position& pos = view.get<Position>(*it);
+				Rotation& rot = view.get<Rotation>(*it);
 				Scale& scale = view.get<Scale>(*it);
 				RigidBody& rb = view.get<RigidBody>(*it);
 				if (rb.collider == nullptr) continue;
 					for (auto otherIt = it; otherIt != view.end(); otherIt++) {
 						if (otherIt == it) continue;
 						Position& otherPos = view.get<Position>(*otherIt);
-						Scale& otherScale = view.get<Scale>(*it);
+						Rotation& otherRot = view.get<Rotation>(*otherIt);
+						Scale& otherScale = view.get<Scale>(*otherIt);
 						RigidBody& otherRb = view.get<RigidBody>(*otherIt);
 						if (otherRb.collider == nullptr) continue;
-						State a = { *it, pos, scale, &rb };
-						State b = { *otherIt, otherPos, otherScale, &otherRb };
+						State a = { *it, pos, rot, scale, &rb };
+						State b = { *otherIt, otherPos, otherRot, otherScale, &otherRb };
 						if (rb.collider->GetShape() == otherRb.collider->GetShape()) {
 							// Same Shape
 							switch (rb.collider->GetShape())
