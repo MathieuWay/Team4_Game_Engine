@@ -168,7 +168,7 @@ namespace team4_game_engine::engine::mathematics {
 	}
 	void Quaternion::OnInspectorGUI() {
 		if (ImGui::CollapsingHeader("Rotation")) {
-			ImGui::DragFloat4("Local Rotation", &w, 0.1f);
+			ImGui::DragFloat4("Local Rotation vector", &w, 0.01f);
 		}
 	}
 }
