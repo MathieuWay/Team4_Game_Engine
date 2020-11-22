@@ -37,18 +37,18 @@ namespace team4_game_engine::debug {
 		void Update(std::chrono::milliseconds deltatime, engine::World& world);
 	private:
 		void PhysicsDebugWindow();
-		void SceneDebugWindow();
+		//void SceneDebugWindow();
 		void CreateBranche(entt::entity entity);
-		void CreateEntityContextMenu(entt::entity parent);
+		void CreateEntityContextMenu(entt::entity parent, int id, ImGuiPopupFlags flags = 1);
 		void Hierachy();
 		void Inspector();
 		Vector3D DearImGuiOverlay::WorldToScreenCoordinate(glm::vec3 pos);
 		void DrawText(ImDrawList* draw_list, const char* text, ImVec2 pos, ImColor color = ImColor(255, 255, 255));
 
 		// instantiate from tool
-		void Instantiate(entt::entity parent, int mesh = -1);
+		//void Instantiate(entt::entity parent, int mesh = -1);
 		// instantiate with position & velocity defined
-		void Instantiate(entt::entity parent, int mesh, Vector3D pos, Vector3D vel);
+		//void Instantiate(entt::entity parent, int mesh, Vector3D pos, Vector3D vel);
 
 		ImGuiIO io;
 		std::vector<entt::entity*> selectedEntities;
