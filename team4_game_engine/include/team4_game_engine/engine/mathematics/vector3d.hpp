@@ -14,6 +14,7 @@ namespace team4_game_engine::engine::mathematics {
         return randfloat(e2);
     }
     class Matrix4;
+    class Quaternion;
     class Vector3D {
     public:
 	    float x, y, z;
@@ -116,5 +117,7 @@ namespace team4_game_engine::engine::mathematics {
         static Vector3D localToWorldDirn(const Vector3D& local, const Matrix4& transform);
 
         static Vector3D worldToLocalDirn(const Vector3D& world, const Matrix4& transform);
+
+        Vector3D Rotate(Quaternion q);
     };
 }

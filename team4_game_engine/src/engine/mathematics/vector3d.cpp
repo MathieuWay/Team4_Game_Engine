@@ -1,9 +1,12 @@
 #pragma once
 #include <team4_game_engine/engine/mathematics/vector3d.hpp>
+#include <team4_game_engine/engine/mathematics/quaternion.hpp>
 #include <team4_game_engine/engine/mathematics/matrix4.hpp>
 #include <iostream>
 #include <sstream>
 #include <random>
+#include <glm/glm.hpp>
+#include <glm/gtx/quaternion.hpp>
 
 namespace team4_game_engine::engine::mathematics {
     void Vector3D::Write(serialization::OutputMemoryStream& stream) {
@@ -141,5 +144,12 @@ namespace team4_game_engine::engine::mathematics {
 
     Vector3D Vector3D::worldToLocalDirn(const Vector3D& world, const Matrix4& transform) {
         return transform.transformInverseDirection(world);
+    }
+
+    Vector3D Vector3D::Rotate(Quaternion q) {
+        glm::quat glmq = glm::quat(q.w, q.i, q.j, q.k);
+        glm::quat pure = glm::quat(0, x, y, z);
+        glm::quat qpq = glmq * pure * (glm::conjugate(glmq));
+        return Vector3D(qpq.x, qpq.y, qpq.z);
     }
 }
