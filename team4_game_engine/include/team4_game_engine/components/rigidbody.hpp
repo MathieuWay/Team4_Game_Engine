@@ -42,14 +42,19 @@ namespace team4_game_engine::components {
 		float angularDrag; // aka damping
 
 		bool isAwake = false;
+		// Debug
+		bool showDebug = false;
+		Vector3D forceDebug = Vector3D();
+		Vector3D pointDebug = Vector3D();
 
-		RigidBody(Collider* col, float _mass, float _restitution, float _drag, engine::mathematics::Vector3D _gravity, bool _useGravity = true) :
+		RigidBody(Collider* col, float _mass, float _restitution, float _linearDrag, float _angularDrag, Matrix3 _inverseInertiaTensor, engine::mathematics::Vector3D _gravity, bool _useGravity = true) :
 			collider(col),
 			restitutionCoef(_restitution),
 			transforMatrix(Matrix4()),
+			inverseInertiaTensor(_inverseInertiaTensor),
 			inverseInertiaTensorWorld(Matrix3()),
-			linearDrag(_drag),
-			angularDrag(0),
+			linearDrag(_linearDrag),
+			angularDrag(_angularDrag),
 			gravity(_gravity),
 			isKinematic(false),
 			useGravity(_useGravity),
@@ -90,30 +95,56 @@ namespace team4_game_engine::components {
 			}
 			if (ImGui::CollapsingHeader("RigidBody")) {
 				ImGui::Checkbox("Is Kinematic", &isKinematic);
-				ImGui::Checkbox("Use Gravity", &useGravity);
-				ImGui::DragFloat3("Gravity Vector", &gravity.x);
+
 				ImGui::DragFloat("Mass", &mass, 0.1f, 0, FLT_MAX);
 				inverseMass = mass > 0 ? 1 / mass : FLT_MAX;
 
-				if (ImGui::BeginCombo("Restitution Type", RestitutionCombineLabel[restitutionCombine])) // The second parameter is the label previewed before opening the combo.
-				{
-					for (int n = 0; n < RestitutionCombineLabel.size(); n++)
+				// Rectitution
+				if (ImGui::TreeNode("Restitution")) {
+					if (ImGui::BeginCombo("Type", RestitutionCombineLabel[restitutionCombine])) // The second parameter is the label previewed before opening the combo.
 					{
-						bool is_selected = ((int)restitutionCombine == n); // You can store your selection however you want, outside or inside your objects
-						if (ImGui::Selectable(RestitutionCombineLabel[(RestitutionCombine)n], is_selected))
-							restitutionCombine = (RestitutionCombine)n;
-						if (is_selected)
-							ImGui::SetItemDefaultFocus();   // You may set the initial focus when opening the combo (scrolling + for keyboard navigation support)
+						for (int n = 0; n < RestitutionCombineLabel.size(); n++)
+						{
+							bool is_selected = ((int)restitutionCombine == n); // You can store your selection however you want, outside or inside your objects
+							if (ImGui::Selectable(RestitutionCombineLabel[(RestitutionCombine)n], is_selected))
+								restitutionCombine = (RestitutionCombine)n;
+							if (is_selected)
+								ImGui::SetItemDefaultFocus();   // You may set the initial focus when opening the combo (scrolling + for keyboard navigation support)
+						}
+						ImGui::EndCombo();
 					}
-					ImGui::EndCombo();
+					ImGui::DragFloat("Coefficient", &restitutionCoef, 0.05f, 0, 1);
+					ImGui::TreePop();
 				}
-				ImGui::DragFloat("Restitution", &restitutionCoef, 0.05f, 0, 1);
 
 				// Velocity
-				ImGui::DragFloat3("Velocity", &velocity.x);
+				if (ImGui::TreeNode("Velocity")) {
+					ImGui::DragFloat3("Linear", &linearVelocity.x);
+					ImGui::DragFloat3("Angular", &angularVelocity.x);
+					ImGui::TreePop();
+				}
 
 				// Acceleration
-				ImGui::DragFloat3("Acceleration", &accumulateLinearForces.x);
+				if (ImGui::TreeNode("Acceleration")) {
+					ImGui::DragFloat3("Linear##test", &accumulateLinearForces.x);
+					ImGui::DragFloat3("Angular##test2", &accumulateAngularForces.x);
+					ImGui::TreePop();
+				}
+
+				//Gravity
+				if (ImGui::TreeNode("Gravity")) {
+					ImGui::Checkbox("Use Gravity", &useGravity);
+					ImGui::DragFloat3("Gravity Vector", &gravity.x);
+					ImGui::TreePop();
+				}
+
+				// Drag
+				if (ImGui::TreeNode("Drag")) {
+					ImGui::DragFloat("Linear##test3", &linearDrag, 0.01f, 0, 1);
+					ImGui::DragFloat("Angular##test4", &angularDrag, 0.01f, 0, 1);
+					ImGui::TreePop();
+				}
+
 			}
 		};
 	};
