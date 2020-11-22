@@ -240,6 +240,7 @@ namespace team4_game_engine::engine {
 				glfwPollEvents();
 				int width, height;
 				glfwGetWindowSize(m_window, &width, &height);
+				glViewport(0, 0, width, height);
 				//update all systems
 				for (auto& system : m_systems) {
 					system->Update(deltaTime, *m_world);
