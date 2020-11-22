@@ -139,23 +139,18 @@ namespace team4_game_engine::engine::mathematics {
 
 	Vector3D Matrix4::transform(const Vector3D& vector) const
 	{
-		Vector3D tmpV = vector;
-		tmpV.x -= data[3];
-		tmpV.y -= data[7];
-		tmpV.z -= data[11];
-
 		return Vector3D(
-			tmpV.x * data[0] +
-			tmpV.y * data[1] +
-			tmpV.z * data[2],
+			vector.x * data[0] +
+			vector.y * data[1] +
+			vector.z * data[2] + data[3],
 
-			tmpV.x * data[4] +
-			tmpV.y * data[5] +
-			tmpV.z * data[6],
+			vector.x * data[4] +
+			vector.y * data[5] +
+			vector.z * data[6] + data[7],
 
-			tmpV.x * data[8] +
-			tmpV.y * data[9] +
-			tmpV.z * data[10]
+			vector.x * data[8] +
+			vector.y * data[9] +
+			vector.z * data[10] + data[11]
 		);
 	}
 
