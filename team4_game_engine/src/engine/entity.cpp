@@ -19,7 +19,7 @@ namespace team4_game_engine::engine {
 		AddComponent<components::Parent>(entt::null);
 		AddComponent<components::Children>(std::vector<entt::entity>());
 		AddComponent<components::Position>(0.f, 0.f, 0.f);
-		AddComponent<components::Rotation>(0.f, 0.f, 0.f, 0.f);
+		AddComponent<components::Rotation>();
 		AddComponent<components::Scale>(1.f, 1.f, 1.f);
 	}
 

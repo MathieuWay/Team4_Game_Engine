@@ -7,6 +7,7 @@
 using namespace team4_game_engine::engine;
 
 #include <team4_game_engine/engine/mathematics/vector3d.hpp>
+#include <team4_game_engine/engine/mathematics/matrix3.hpp>
 using namespace team4_game_engine::engine::mathematics;
 
 #include <team4_game_engine/components/name.hpp>
@@ -38,13 +39,18 @@ namespace team4_game_engine::engine::primitive {
 		renderer::Renderer3D& instance = renderer::Renderer3D::Instance();
 		Entity* entity = Empty(name, parent);
 		entity->AddComponent<components::Color>(1.0f, 1.0f, 1.0f);
+		Matrix3 iit = Matrix3();
+		iit.data[0] = 2/5 * 1 * 1 ;
+		iit.data[4] = 2 / 5 * 1 * 1;
+		iit.data[8] = 2 / 5 * 1 * 1;
 		auto& rb = entity->AddComponent<RigidBody>(
 			new SphereCollider(1),
 			1,
 			1,
-			1,
-			Vector3D(0, -10, 0),
-			true);
+			0.995,
+			0.995,
+			iit,
+			Vector3D(0, -10, 0));
 
 		auto meshs = std::vector<std::shared_ptr<team4_game_engine::renderer::Mesh>>();
 		meshs.push_back(instance.ms_meshs[mesh]);
@@ -57,13 +63,18 @@ namespace team4_game_engine::engine::primitive {
 		renderer::Renderer3D& instance = renderer::Renderer3D::Instance();
 		Entity* entity = Empty(name, parent);
 		entity->AddComponent<components::Color>(1.0f, 1.0f, 1.0f);
+		Matrix3 iit = Matrix3();
+		iit.data[0] = 1 / 12 * 1 + (1 + 1);
+		iit.data[4] = 1 / 12 * 1 + (1 + 1);
+		iit.data[8] = 1 / 12 * 1 + (1 + 1);
 		auto& rb = entity->AddComponent<RigidBody>(
 			new BoxCollider(Vector3D(1.0f, 1.0f, 1.0f)),
 			1,
 			1,
-			1,
-			Vector3D(0, -10, 0),
-			true);
+			0.995,
+			0.995,
+			iit,
+			Vector3D(0, -10, 0));
 
 		auto meshs = std::vector<std::shared_ptr<team4_game_engine::renderer::Mesh>>();
 		meshs.push_back(instance.ms_meshs[mesh]);
