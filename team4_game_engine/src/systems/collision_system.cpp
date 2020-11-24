@@ -52,7 +52,7 @@ namespace team4_game_engine::systems {
 				Rotation& rot = view.get<Rotation>(*it);
 				Scale& scale = view.get<Scale>(*it);
 				RigidBody& rb = view.get<RigidBody>(*it);
-				pos.local = pos.local.sumVector(Vector3D().localToWorldDirn(rb.massCenter.invert(), rb.transforMatrix));
+				pos.local = pos.local.sumVector(Vector3D::localToWorldDirn(rb.massCenter.invert(), rb.transforMatrix));
 				if (rb.collider == nullptr) continue;
 					for (auto otherIt = it; otherIt != view.end(); otherIt++) {
 						if (otherIt == it) continue;
@@ -60,7 +60,7 @@ namespace team4_game_engine::systems {
 						Rotation& otherRot = view.get<Rotation>(*otherIt);
 						Scale& otherScale = view.get<Scale>(*otherIt);
 						RigidBody& otherRb = view.get<RigidBody>(*otherIt);
-						otherPos.local = otherPos.local.sumVector(Vector3D().localToWorldDirn(otherRb.massCenter.invert(), otherRb.transforMatrix));
+						otherPos.local = otherPos.local.sumVector(Vector3D::localToWorldDirn(otherRb.massCenter.invert(), otherRb.transforMatrix));
 						if (otherRb.collider == nullptr) continue;
 						State a = { *it, pos, rot, scale, &rb };
 						State b = { *otherIt, otherPos, otherRot, otherScale, &otherRb };
@@ -192,11 +192,7 @@ namespace team4_game_engine::systems {
 		// check box to box
 		Collision* IsBoxToBoxColliding(State a, State b) {
 			BoxData aBox = ((BoxCollider*)a.rb->collider)->GetBoxData();
-			aBox.min = aBox.min.sumVector(a.rb->massCenter);
-			aBox.max = aBox.max.sumVector(a.rb->massCenter);
 			BoxData bBox = ((BoxCollider*)b.rb->collider)->GetBoxData();
-			bBox.min = bBox.min.sumVector(b.rb->massCenter);
-			bBox.max = bBox.max.sumVector(b.rb->massCenter);
 			if (a.pos.local.x < b.pos.local.x + bBox.max.x * 2 &&
 				a.pos.local.x + aBox.max.x * 2 > b.pos.local.x &&
 				a.pos.local.y < b.pos.local.y + bBox.max.y * 2 &&

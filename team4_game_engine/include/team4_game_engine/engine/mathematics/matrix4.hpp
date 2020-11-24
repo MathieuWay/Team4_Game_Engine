@@ -57,13 +57,13 @@ namespace team4_game_engine::engine::mathematics {
 		*/
 		Vector3D transformInverseDirection(const Vector3D& vector) const;
 
-		Vector3D localToWorld(const Vector3D& local, const Matrix4& transform);
+		static Vector3D localToWorld(const Vector3D& local, const Matrix4& transform);
 
-		Vector3D worldToLocal(const Vector3D& world, const Matrix4& transform);
+		static Vector3D worldToLocal(const Vector3D& world, const Matrix4& transform);
 
-		Vector3D localToWorldDirn(const Vector3D& local, const Matrix4& transform);
+		static Vector3D localToWorldDirn(const Vector3D& local, const Matrix4& transform);
 
-		Vector3D worldToLocalDirn(const Vector3D& world, const Matrix4& transform);
+		static Vector3D worldToLocalDirn(const Vector3D& world, const Matrix4& transform);
 
 		/*
 		affiche la matrcie 4

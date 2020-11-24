@@ -63,7 +63,7 @@ namespace team4_game_engine::renderer {
 					components::Position pos = entity->Position();
 					components::RigidBody rb = entity->GetComponent<components::RigidBody>();
 					//Vector3D position = Vector3D().localToWorldDirn(pos.local.sumVector(rb.massCenter), rb.transforMatrix);
-					Vector3D position = pos.local.sumVector(Vector3D().localToWorldDirn(rb.massCenter.invert(), rb.transforMatrix));
+					Vector3D position = pos.local.sumVector(Vector3D::localToWorldDirn(rb.massCenter.invert(), rb.transforMatrix));
 					glm::mat4 translationMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(position.x, position.y, position.z));
 
 					//Rotation
