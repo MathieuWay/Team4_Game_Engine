@@ -22,6 +22,7 @@ namespace team4_game_engine::components {
 		Vector3D acceleration;
 		Vector3D accumulateLinearForces;
 		Vector3D accumulateAngularForces;
+		Vector3D massCenter;
 		float inverseMass;
 		float mass;
 		float restitutionCoef;
@@ -43,7 +44,7 @@ namespace team4_game_engine::components {
 
 		bool isAwake = false;
 		// Debug
-		bool showDebug = false;
+		bool showDebug = true;
 		Vector3D forceDebug = Vector3D();
 		Vector3D pointDebug = Vector3D();
 
@@ -96,8 +97,13 @@ namespace team4_game_engine::components {
 			if (ImGui::CollapsingHeader("RigidBody")) {
 				ImGui::Checkbox("Is Kinematic", &isKinematic);
 
-				ImGui::DragFloat("Mass", &mass, 0.1f, 0, FLT_MAX);
-				inverseMass = mass > 0 ? 1 / mass : FLT_MAX;
+				// Mass
+				if (ImGui::TreeNode("Mass")) {
+					ImGui::DragFloat("Mass", &mass, 0.1f, 0, FLT_MAX);
+					ImGui::DragFloat3("Center", &massCenter.x, 0.01f);
+					inverseMass = mass > 0 ? 1 / mass : FLT_MAX;
+					ImGui::TreePop();
+				}
 
 				// Rectitution
 				if (ImGui::TreeNode("Restitution")) {

@@ -87,7 +87,8 @@ namespace team4_game_engine::debug {
 				//rotation.addScaledVector(Vector3D(matrixRotation[0], matrixRotation[1], matrixRotation[2]), delta);
 				scale = { matrixScale[0], matrixScale[1], matrixScale[2] };
 			}
-
+		}
+		world.Registry().view<Position, RigidBody>().each([this, io](Position& pos, RigidBody& rb) {
 			// Debug Overlay
 			if (rb.showDebug) {
 				ImGuiStyle& style = ImGui::GetStyle();
@@ -105,36 +106,19 @@ namespace team4_game_engine::debug {
 					ImGuiWindowFlags_NoInputs);
 				ImDrawList* draw_list = ImGui::GetWindowDrawList();
 				auto world = Engine::Instance().GetWorld().lock();
-				for (auto entity : selected) {
-					if (!world->Registry().valid(entity)) { world->Registry().destroy(entity); continue; }
-					ImVec2 originscreenCoordinate = WorldToScreenCoordinate(glm::vec3(position.local.x, position.local.y, position.local.z));
-					ImVec2 pointscreenCoordinate = WorldToScreenCoordinate(glm::vec3(position.local.x + rb.pointDebug.x, position.local.y + rb.pointDebug.y, position.local.z + rb.pointDebug.z));
-					ImVec2 forceDirection = WorldToScreenCoordinate(glm::vec3(position.local.x + rb.pointDebug.x + rb.forceDebug.x, position.local.y + rb.pointDebug.y + rb.forceDebug.y, position.local.z + rb.pointDebug.z + rb.forceDebug.z));
-					draw_list->AddCircleFilled(originscreenCoordinate, 10, IM_COL32(0, 0, 255, 75));
-					draw_list->AddCircleFilled(pointscreenCoordinate, 10, IM_COL32(255, 0, 0, 75));
-					draw_list->AddLine(pointscreenCoordinate, forceDirection, IM_COL32(0, 255, 0, 75), 10);
-					//if (showDebugText) {
-						//std::string text = "Position " + position.local.GetVectorData() + "\n";
-						//text += "Velocity " + rb.linearVelocity.GetVectorData() + "\n";
-						//text += "Acceleration " + rb.accumulateLinearForces.GetVectorData() + "\n";
-						//text += "Mass " + std::to_string(particule->get()->GetMass()) + "\n";
-						//text += "Radius " + std::to_string(particule->get()->GetRadius()) + "\n";
-						//text += "Restitution " + std::to_string(particule->get()->GetRestitutionCoef()) + "\n";
-						//ImVec2 debugTextCoord = screenCoordinate;
-						//debugTextCoord.x += 25;
-						//debugTextCoord.y -= 50;
-						//DrawText(draw_list, text.c_str(), debugTextCoord);
-					//}
-					//if (showDebugRay) {
-						//ImVec2 velDirection = WorldToScreenCoordinate(glm::vec3(pos.x + vel.x, pos.y + vel.y, pos.z + vel.z));
-						//draw_list->AddLine(screenCoordinate, velDirection, IM_COL32(0, 0, 255, 75), pointSize);
-					//}
-				}
+				Vector3D massCenterWorld = pos.local;
+				Vector3D pointWorld = pos.local.sumVector(Vector3D().localToWorldDirn(rb.pointDebug, rb.transforMatrix));
+				Vector3D forceWorld = pos.local.sumVector(Vector3D().localToWorldDirn(rb.pointDebug.sumVector(rb.forceDebug), rb.transforMatrix));
+				ImVec2 originscreenCoordinate = WorldToScreenCoordinate(glm::vec3(massCenterWorld.x, massCenterWorld.y, massCenterWorld.z));
+				ImVec2 pointscreenCoordinate = WorldToScreenCoordinate(glm::vec3(pointWorld.x, pointWorld.y, pointWorld.z));
+				ImVec2 forceDirection = WorldToScreenCoordinate(glm::vec3(forceWorld.x, forceWorld.y, forceWorld.z));
+				draw_list->AddCircleFilled(originscreenCoordinate, 10, IM_COL32(0, 0, 255, 75));
+				draw_list->AddCircleFilled(pointscreenCoordinate, 10, IM_COL32(255, 0, 0, 75));
+				draw_list->AddLine(pointscreenCoordinate, forceDirection, IM_COL32(0, 255, 0, 75), 10);
 				ImGui::End();
 				style.WindowBorderSize = 1.0f;
 			}
-		}
-
+			});
 		//ImGui Debug Window
 		//SceneDebugWindow();
 		Inspector();

@@ -15,19 +15,19 @@ namespace team4_game_engine::physics {
 	public:
 		static inline void _calculateTransformMatrix(Matrix4& transformMatrix, const Vector3D& position, const Quaternion& orientation)
 		{
-			transformMatrix.data[0] = 1 - (2 * orientation.j * orientation.j - 2 * orientation.k * orientation.k);
+			transformMatrix.data[0] = 1 - 2 * orientation.j * orientation.j - 2 * orientation.k * orientation.k;
 			transformMatrix.data[1] = 2 * orientation.i * orientation.j - 2 * orientation.w * orientation.k;
 			transformMatrix.data[2] = 2 * orientation.i * orientation.k + 2 * orientation.w * orientation.j;
 			transformMatrix.data[3] = position.x;
 
 			transformMatrix.data[4] = 2 * orientation.i * orientation.j + 2 * orientation.w * orientation.k;
-			transformMatrix.data[5] = 1 - (2 * orientation.i * orientation.i - 2 * orientation.k * orientation.k);
+			transformMatrix.data[5] = 1 - 2 * orientation.i * orientation.i - 2 * orientation.k * orientation.k;
 			transformMatrix.data[6] = 2 * orientation.j * orientation.k - 2 * orientation.w * orientation.i;
 			transformMatrix.data[7] = position.y;
 
 			transformMatrix.data[8] = 2 * orientation.i * orientation.k - 2 * orientation.w * orientation.j;
 			transformMatrix.data[9] = 2 * orientation.j * orientation.k + 2 * orientation.w * orientation.i;
-			transformMatrix.data[10] = 1 - (2 * orientation.i * orientation.i - 2 * orientation.j * orientation.j);
+			transformMatrix.data[10] = 1 - 2 * orientation.i * orientation.i - 2 * orientation.j * orientation.j;
 			transformMatrix.data[11] = position.z;
 		}
 
@@ -89,7 +89,7 @@ namespace team4_game_engine::physics {
 		static void AddForceAtPoint(Position& pos, RigidBody& rb, const Vector3D& force, const Vector3D& point)
 		{
 			Vector3D pt = point;
-			pt = pt.subVector(pos.local);
+			pt = pt.subVector(pos.local.sumVector(rb.massCenter));
 
 			rb.accumulateLinearForces = rb.accumulateLinearForces.sumVector(force);
 			rb.accumulateAngularForces = rb.accumulateAngularForces.sumVector(pt.vectorProduct(force));

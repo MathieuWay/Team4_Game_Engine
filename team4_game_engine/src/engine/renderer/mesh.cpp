@@ -6,6 +6,7 @@
 using namespace team4_game_engine::engine::mathematics;
 
 #include <team4_game_engine/components/position.hpp>
+#include <team4_game_engine/components/rigidbody.hpp>
 #include <team4_game_engine/components/color.hpp>
 #include <team4_game_engine/engine/engine.hpp>
 #include <team4_game_engine/engine/world.hpp>
@@ -60,7 +61,10 @@ namespace team4_game_engine::renderer {
 				case components::ComponentType::Transform: {
 					//Translation
 					components::Position pos = entity->Position();
-					glm::mat4 translationMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(pos.local.x, pos.local.y, pos.local.z));
+					components::RigidBody rb = entity->GetComponent<components::RigidBody>();
+					//Vector3D position = Vector3D().localToWorldDirn(pos.local.sumVector(rb.massCenter), rb.transforMatrix);
+					Vector3D position = pos.local.sumVector(Vector3D().localToWorldDirn(rb.massCenter.invert(), rb.transforMatrix));
+					glm::mat4 translationMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(position.x, position.y, position.z));
 
 					//Rotation
 					components::Rotation rot = entity->Rotation();

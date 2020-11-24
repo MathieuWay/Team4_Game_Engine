@@ -75,10 +75,7 @@ namespace team4_game_engine::engine::mathematics {
     }*/
 
     Vector3D Vector3D::invert() {
-        x = -x;
-        y = -y;
-        z = -z;
-        return *this;
+        return Vector3D(-x, -y, -z);
     }
 
     float Vector3D::magnitude() {
