@@ -22,9 +22,10 @@ En haut au millieu se trouve la "Physics Winow":
 Sur la gauche se situe la hiérarchie de la scène.
 
 - Le cube situé en haut vous permet de déplacer la caméra autour de la scène.
-- Vous pouvez sélectionner les particules des objets qui ont été créer dans la scène pour pouvoir déplacer ces derniers manuellement.
+- Vous pouvez sélectionner les objets qui ont été créer dans la scène pour pouvoir déplacer ces derniers manuellement.
 - Le bouton "Clean Scene" permet de supprimer tout les objets présent dans la scène.
 - Le bouton "Add entity" permet d'ajouter un objet dans la scène.
+- Un clic droit vous permet aussi de créer un objet ou vous voulez dans la hiérachie.
 
 
 
@@ -32,18 +33,15 @@ Sur la gauche se situe la hiérarchie de la scène.
 En haut à droite se situe la fenêtre d'inspection.
 Toutes les données de l'objet y sont regroupé par catégorie
 
-- Dans les catégorie Position / Rotation / Scale / Color
-	- Les données de position, rotation, taille et de couleur de l'objet sont accéssible et modifiable
+- Dans les catégories Position / Rotation / Scale / Color:
+	- Les données de position, rotation, taille et de couleur de l'objet sont accéssibles et modifiables.
 
 
-- Dans Les catégorie Box / Sphere Collider / RigidBody:
-	- Les données de physique (mass, drag, gravité, restitution, etc...) et de collision (sa taille de boite de collision)
+- Dans Les catégories Box / Sphere Collider / RigidBody:
+	- Les données de physique (mass, drag, gravité, restitution, etc...) et de collision (sa taille de boite de collision) sont accéssibles et modifiables.
 
+- Dans La catégorie Debug Force:
+	-Vous pouvez ajouter une force en donnant son point d'application et sa direction puis en cliquant sur "Add Force".
 
 - Dans les catégorie Model:
-	- Cette catégorie n'est pas utilisé pour le moment
-
-
-
-
-
+	- Cette catégorie n'est pas utilisée pour le moment.
