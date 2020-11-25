@@ -116,7 +116,7 @@ namespace team4_game_engine::debug {
 				auto world = Engine::Instance().GetWorld().lock();
 				Vector3D massCenterWorld = pos.local;
 				Vector3D pointWorld = pos.local.sumVector(Vector3D::localToWorldDirn(rb.pointDebug, rb.transforMatrix));
-				Vector3D forceWorld = pos.local.sumVector(Vector3D::localToWorldDirn(rb.pointDebug.sumVector(rb.forceDebug.normalize()), rb.transforMatrix));
+				Vector3D forceWorld = pos.local.sumVector(Vector3D::localToWorldDirn(rb.pointDebug.sumVector(rb.forceDebug), rb.transforMatrix));
 				ImVec2 originscreenCoordinate = WorldToScreenCoordinate(glm::vec3(massCenterWorld.x, massCenterWorld.y, massCenterWorld.z));
 				ImVec2 pointscreenCoordinate = WorldToScreenCoordinate(glm::vec3(pointWorld.x, pointWorld.y, pointWorld.z));
 				ImVec2 forceDirection = WorldToScreenCoordinate(glm::vec3(forceWorld.x, forceWorld.y, forceWorld.z));
