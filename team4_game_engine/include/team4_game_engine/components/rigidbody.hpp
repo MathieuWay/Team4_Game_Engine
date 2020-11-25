@@ -150,7 +150,7 @@ namespace team4_game_engine::components {
 						}
 						ImGui::EndCombo();
 					}
-					ImGui::DragFloat("Coefficient", &restitutionCoef, 0.05f, 0, 1);
+					ImGui::DragFloat("Coefficient", &restitutionCoef, 0.05f, 0.001f, 1);
 					ImGui::TreePop();
 				}
 
