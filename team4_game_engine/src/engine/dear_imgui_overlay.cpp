@@ -40,7 +40,6 @@ namespace team4_game_engine::debug {
 		io = ImGui::GetIO();
 		ImGui::NewFrame();
 		ImGuizmo::BeginFrame();
-		ImGui::ShowDemoWindow();
 		glm::mat4 projection = engine::SceneView::Instance().GetProjection();
 		components::Camera& camera = team4_game_engine::engine::SceneView::Instance().GetMainCameraComponent();
 		if (showGrid) ImGuizmo::DrawGrid(&camera.view[0][0], &projection[0][0], &glm::mat4(1.0f)[0][0], 10 * glm::ceil(distance / 10));
