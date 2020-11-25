@@ -48,11 +48,11 @@ namespace team4_game_engine::components {
 		Vector3D forceDebug = Vector3D();
 		Vector3D pointDebug = Vector3D();
 
-		RigidBody(Collider* col, float _mass, float _restitution, float _linearDrag, float _angularDrag, Matrix3 _inverseInertiaTensor, engine::mathematics::Vector3D _gravity, bool _useGravity = true) :
+		RigidBody(Collider* col, float _mass, float _restitution, float _linearDrag, float _angularDrag, Matrix3 _InertiaTensor, engine::mathematics::Vector3D _gravity, bool _useGravity = true) :
 			collider(col),
 			restitutionCoef(_restitution),
 			transforMatrix(Matrix4()),
-			inverseInertiaTensor(_inverseInertiaTensor),
+			inverseInertiaTensor(_InertiaTensor.Inverse()),
 			inverseInertiaTensorWorld(Matrix3()),
 			linearDrag(_linearDrag),
 			angularDrag(_angularDrag),

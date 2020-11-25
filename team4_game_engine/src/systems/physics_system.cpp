@@ -40,7 +40,7 @@ namespace team4_game_engine::systems {
 
 				assert(delta > 0.0);
 
-				Vector3D resultAccL = resultAccL.sumScalarVector(rb.accumulateLinearForces, rb.inverseMass);
+				Vector3D resultAccL = Vector3D().sumScalarVector(rb.accumulateLinearForces, rb.inverseMass);
 				Vector3D resultAccA = rb.inverseInertiaTensorWorld * rb.accumulateAngularForces;
 
 				rb.linearVelocity = rb.linearVelocity.sumScalarVector(resultAccL, delta);

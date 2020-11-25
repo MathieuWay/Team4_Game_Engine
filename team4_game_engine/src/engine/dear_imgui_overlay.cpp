@@ -566,7 +566,9 @@ namespace team4_game_engine::debug {
 						ImGui::DragFloat3("Force", &rb.forceDebug.x);
 						ImGui::DragFloat3("Point", &rb.pointDebug.x, 0.01f);
 						if (ImGui::Button("Add Force")) {
-							Physics::AddForceAtBodyPoint(pos, rb, rb.forceDebug, rb.pointDebug);
+
+							Vector3D worldForce = Vector3D().localToWorldDirn(rb.forceDebug, rb.transforMatrix);
+							Physics::AddForceAtBodyPoint(pos, rb, worldForce, rb.pointDebug);
 						}
 						ImGui::TreePop();
 					}
