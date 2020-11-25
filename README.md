@@ -6,10 +6,15 @@
 - Lancer l'éxécutable compiler dans le dossier "./examples/basic_usage"
 
 
+Raccourcie clavier (AZERTY) :
+A : Outil de translation
+Z : Outil de rotation
+E : Outil de taille
+
+X : Alterne les outils pour utilisé les axes Local ou World
 
 
-
-Une fois dans la fenêtre, Il y a trois menu vous permettant de gérer le moteur.
+Une fois dans l'application lancée, Il y a trois menu vous permettant de gérer le moteur.
 
 En haut au millieu se trouve la "Physics Winow":
 

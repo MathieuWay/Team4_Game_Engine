@@ -34,7 +34,7 @@ namespace team4_game_engine::debug {
 	void DearImGuiOverlay::Update(std::chrono::milliseconds deltatime, engine::World& world) {
 		static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::TRANSLATE);
 		static ImGuizmo::MODE mCurrentGizmoMode(ImGuizmo::WORLD);
-		static bool toolManipulation = true;
+		static bool toolManipulation = false;
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		io = ImGui::GetIO();
@@ -62,11 +62,16 @@ namespace team4_game_engine::debug {
 			mCurrentGizmoOperation = ImGuizmo::SCALE;
 			toolManipulation = true;
 		}
+		if (ImGui::IsKeyPressed(GLFW_KEY_X)) {
+			if(mCurrentGizmoMode == ImGuizmo::LOCAL)
+				mCurrentGizmoMode = ImGuizmo::WORLD;
+			else
+				mCurrentGizmoMode = ImGuizmo::LOCAL;
+		}
 		for (auto& entity : selected) {
 			Position& position = world.Registry().get<Position>(entity);
 			Rotation& rotation = world.Registry().get<Rotation>(entity);
 			Scale& scale = world.Registry().get<Scale>(entity);
-			RigidBody& rb = world.Registry().get<RigidBody>(entity);
 			if(toolManipulation){
 				glm::mat4 matrice = glm::mat4(1.0f);
 				matrice = glm::translate(matrice, glm::vec3(position.local.x, position.local.y, position.local.z));
@@ -111,13 +116,13 @@ namespace team4_game_engine::debug {
 				auto world = Engine::Instance().GetWorld().lock();
 				Vector3D massCenterWorld = pos.local;
 				Vector3D pointWorld = pos.local.sumVector(Vector3D::localToWorldDirn(rb.pointDebug, rb.transforMatrix));
-				Vector3D forceWorld = pos.local.sumVector(Vector3D::localToWorldDirn(rb.pointDebug.sumVector(rb.forceDebug), rb.transforMatrix));
+				Vector3D forceWorld = pos.local.sumVector(Vector3D::localToWorldDirn(rb.pointDebug.sumVector(rb.forceDebug.normalize()), rb.transforMatrix));
 				ImVec2 originscreenCoordinate = WorldToScreenCoordinate(glm::vec3(massCenterWorld.x, massCenterWorld.y, massCenterWorld.z));
 				ImVec2 pointscreenCoordinate = WorldToScreenCoordinate(glm::vec3(pointWorld.x, pointWorld.y, pointWorld.z));
 				ImVec2 forceDirection = WorldToScreenCoordinate(glm::vec3(forceWorld.x, forceWorld.y, forceWorld.z));
-				draw_list->AddCircleFilled(originscreenCoordinate, 10, IM_COL32(0, 0, 255, 75));
-				draw_list->AddCircleFilled(pointscreenCoordinate, 10, IM_COL32(255, 0, 0, 75));
-				draw_list->AddLine(pointscreenCoordinate, forceDirection, IM_COL32(0, 255, 0, 75), 10);
+				draw_list->AddCircleFilled(originscreenCoordinate, 8, IM_COL32(0, 0, 255, 128));
+				draw_list->AddCircleFilled(pointscreenCoordinate, 8, IM_COL32(255, 0, 0, 128));
+				draw_list->AddLine(pointscreenCoordinate, forceDirection, IM_COL32(0, 255, 0, 128), 8);
 				ImGui::End();
 				style.WindowBorderSize = 1.0f;
 			}
@@ -565,7 +570,7 @@ namespace team4_game_engine::debug {
 					auto& pos = world->Registry().get<Position>(lastSelect);
 					rb.OnInspectorGUI();
 
-					if (ImGui::TreeNode("Debug")) {
+					if (ImGui::CollapsingHeader("Debug Force")) {
 						ImGui::Checkbox("Show Debug", &rb.showDebug);
 						ImGui::DragFloat3("Force", &rb.forceDebug.x);
 						ImGui::DragFloat3("Point", &rb.pointDebug.x, 0.01f);
@@ -574,7 +579,6 @@ namespace team4_game_engine::debug {
 							Vector3D worldForce = Vector3D().localToWorldDirn(rb.forceDebug, rb.transforMatrix);
 							Physics::AddForceAtBodyPoint(pos, rb, worldForce, rb.pointDebug);
 						}
-						ImGui::TreePop();
 					}
 					break;
 				}
