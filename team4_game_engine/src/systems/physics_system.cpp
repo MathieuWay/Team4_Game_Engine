@@ -39,8 +39,8 @@ namespace team4_game_engine::systems {
 				if (rb.inverseMass <= 0 || rb.isKinematic) return;
 
 				assert(delta > 0.0);
-				Vector3D resultAccL = rb.acceleration;
-				resultAccL = resultAccL.sumScalarVector(rb.accumulateLinearForces, rb.inverseMass);
+
+				Vector3D resultAccL = resultAccL.sumScalarVector(rb.accumulateLinearForces, rb.inverseMass);
 				Vector3D resultAccA = rb.inverseInertiaTensorWorld * rb.accumulateAngularForces;
 
 				rb.linearVelocity = rb.linearVelocity.sumScalarVector(resultAccL, delta);
