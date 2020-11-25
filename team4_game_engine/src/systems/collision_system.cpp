@@ -33,7 +33,8 @@ namespace team4_game_engine::systems {
 		CollisionSystemImpl(int resolveIteration) : resolver(resolveIteration){
 		}
 		void Update(std::chrono::milliseconds deltatime, engine::World& world) {
-			if (!Physics::doCollisionStep && !Physics::doNextStep) return;
+			if (!Physics::doPhysicsStep && !Physics::doNextStep) return;
+			if (!Physics::doCollisionStep) return;
 			if (Physics::useFixedDeltatime) {
 				m_totalMilli += deltatime;
 				if (m_totalMilli < 1s) return;
@@ -105,9 +106,12 @@ namespace team4_game_engine::systems {
 					case Shape::Sphere:
 						groundPenetration = pos.local.y - ((SphereCollider*)rb.collider)->GetSphereData().radius;
 						break;
-					case Shape::Box:
-						groundPenetration = pos.local.y - ((BoxCollider*)rb.collider)->shapeData.max.y;
-						break;
+					case Shape::Box:{
+						BoxData box = ((BoxCollider*)rb.collider)->shapeData;
+						box.min = box.min.VectorMultiplication(Vector3D(scale.x, scale.y, scale.z));
+						box.max = box.max.VectorMultiplication(Vector3D(scale.x, scale.y, scale.z));
+						groundPenetration = pos.local.y - box.max.y;
+						break; }
 					default:
 						groundPenetration = FLT_MAX;
 						break;
@@ -192,7 +196,11 @@ namespace team4_game_engine::systems {
 		// check box to box
 		Collision* IsBoxToBoxColliding(State a, State b) {
 			BoxData aBox = ((BoxCollider*)a.rb->collider)->GetBoxData();
+			aBox.min = aBox.min.VectorMultiplication(Vector3D(a.scale.x, a.scale.y, a.scale.z));
+			aBox.max = aBox.max.VectorMultiplication(Vector3D(a.scale.x, a.scale.y, a.scale.z));
 			BoxData bBox = ((BoxCollider*)b.rb->collider)->GetBoxData();
+			bBox.min = bBox.min.VectorMultiplication(Vector3D(b.scale.x, b.scale.y, b.scale.z));
+			bBox.max = bBox.max.VectorMultiplication(Vector3D(b.scale.x, b.scale.y, b.scale.z));
 			if (a.pos.local.x < b.pos.local.x + bBox.max.x * 2 &&
 				a.pos.local.x + aBox.max.x * 2 > b.pos.local.x &&
 				a.pos.local.y < b.pos.local.y + bBox.max.y * 2 &&
@@ -233,6 +241,8 @@ namespace team4_game_engine::systems {
 		}
 		Collision* IsBoxToSphereColliding(State box, State sphere) {
 			BoxData boxData = ((BoxCollider*)box.rb->collider)->GetBoxData();
+			boxData.min = boxData.min.VectorMultiplication(Vector3D(box.scale.x, box.scale.y, box.scale.z));
+			boxData.max = boxData.max.VectorMultiplication(Vector3D(box.scale.x, box.scale.y, box.scale.z));
 			SphereData sphereData = ((SphereCollider*)sphere.rb->collider)->GetSphereData();
 			Vector3D point = ClosestPtPointAABB(sphere.pos.local, { boxData.min.sumVector(box.pos.local), boxData.max.sumVector(box.pos.local) });
 			Vector3D dir = point.subVector(sphere.pos.local);
