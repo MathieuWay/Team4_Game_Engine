@@ -24,7 +24,7 @@ namespace team4_game_engine::engine::mathematics {
 	}
 
 
-	// Transform given Vector by the Matrix.
+	// Multiplie la Matrice par un Vecteur donn¨¦.
 
 	Vector3D Matrix3::operator*(Vector3D vector)
 	{
@@ -35,7 +35,7 @@ namespace team4_game_engine::engine::mathematics {
 		);
 	}
 
-	// Return a Matrix who is the mutliplication of this one with an another that is given.
+	// Return une matrice qui est la multiplication entre celle de la classe et une autre qui est donn¨¦e.
 	Matrix3 Matrix3::operator*(Matrix3 M)
 	{
 		return Matrix3(
@@ -53,7 +53,7 @@ namespace team4_game_engine::engine::mathematics {
 		);
 	}
 
-	// Multiply this Matrix whit a given one.
+	// Multiplie cette matrice par une autre entr¨¦e en param¨¨tre.
 	void Matrix3::operator*=(Matrix3 M)
 	{
 		float t1;
@@ -82,7 +82,7 @@ namespace team4_game_engine::engine::mathematics {
 		data[8] = t3;
 	}
 
-	// Set the Matrix to be the inverse of a given Matrix.
+	// Transforme cette matrice en l'inverse d'une autre matrice donn¨¦e.
 	void Matrix3::Setinverse(Matrix3 M)
 	{
 		float t1 = M.data[0] * M.data[4];
@@ -92,7 +92,7 @@ namespace team4_game_engine::engine::mathematics {
 		float t5 = M.data[1] * M.data[6];
 		float t6 = M.data[2] * M.data[6];
 
-		// Calculate the determinant and make sure that it is !=0.
+		// Calcule le d¨¦terminant et s'assure qu'il est diff¨¦rent de 0.
 		float det = (t1 * M.data[8] - t2 * M.data[7] - t3 * M.data[8] +
 			t4 * M.data[7] + t5 * M.data[5] - t6 * M.data[4]);
 		if (det == 0.0f) return;
@@ -121,7 +121,7 @@ namespace team4_game_engine::engine::mathematics {
 		Setinverse(*this);
 	}
 
-	// Set the Matrix to be the transpose of the given Matrix.
+	// Transpose cette matrice par une autre.
 	void Matrix3::SetTranspose(Matrix3 M)
 	{
 		data[0] = M.data[0];
@@ -142,7 +142,7 @@ namespace team4_game_engine::engine::mathematics {
 		return result;
 	}
 
-	// Make the rotation matrix corresponding to the Quaternion given.
+	// Cr¨¦er une matrice de rotation en fonction d'un quaternion donn¨¦.
 	void Matrix3::SetOrientation(Quaternion Q)
 	{
 		data[0] = 1 - (2 * Q.j * Q.j + 2 * Q.k * Q.k);

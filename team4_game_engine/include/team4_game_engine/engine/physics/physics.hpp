@@ -13,6 +13,8 @@ using namespace team4_game_engine::components;
 namespace team4_game_engine::physics {
 	class Physics {
 	public:
+
+		//Permet de calculer la matrice de tranformation à l'aide de la nouvelle orientation
 		static inline void _calculateTransformMatrix(Matrix4& transformMatrix, const Vector3D& position, const Quaternion& orientation)
 		{
 			transformMatrix.data[0] = 1 - 2 * orientation.j * orientation.j - 2 * orientation.k * orientation.k;
@@ -31,6 +33,7 @@ namespace team4_game_engine::physics {
 			transformMatrix.data[11] = position.z;
 		}
 
+		//Donne le tenseur d'inertie dans les coordonnées monde à l'aide la la matrice de transformation
 		static inline void _transformInertiaTensor(Matrix3& iitWorld, const Quaternion& q, const Matrix3& iitBody, const Matrix4& rotMat)
 		{
 			float t4 = rotMat.data[0] * iitBody.data[0] + rotMat.data[1] * iitBody.data[3] + rotMat.data[2] * iitBody.data[6];
@@ -58,6 +61,7 @@ namespace team4_game_engine::physics {
 			iitWorld.data[8] = t52 * rotMat.data[8] + t57 * rotMat.data[9] + t62 * rotMat.data[10];
 		}
 
+		//Recalcule la matrice de transformation et le tenseur d'inertie dans le repere du monde avec la nouvelle oriention normalisee
 		static void CalculateDerivedData(Position& pos, Rotation& rot, RigidBody& rb)
 		{
 			rot.normalize();
@@ -67,17 +71,20 @@ namespace team4_game_engine::physics {
 			_transformInertiaTensor(rb.inverseInertiaTensorWorld, rot, rb.inverseInertiaTensor, rb.transforMatrix);
 		}
 
+		//Donne la valeur de l'inverse de l'inertia tensor donne à la variable inverseInertiaTensor
 		static void setInertiaTensor(RigidBody& rb, const Matrix3& inertiaTensor)
 		{
 			rb.inverseInertiaTensor.Setinverse(inertiaTensor);
 		}
 
+		//Ajoute des forces de deplacement sans rotation
 		static void AddForce(RigidBody& rb, const Vector3D& force)
 		{
 			rb.accumulateLinearForces = rb.accumulateLinearForces.sumVector(force);
 			rb.isAwake = true;
 		}
 
+		//Ajoute des forces à un point du rigidbody
 		static void AddForceAtBodyPoint(Position& pos, RigidBody& rb, const Vector3D& force, const Vector3D& point)
 		{
 			Vector3D pt = Vector3D().localToWorld(point, rb.transforMatrix);
@@ -86,6 +93,7 @@ namespace team4_game_engine::physics {
 			rb.isAwake = true;
 		}
 
+		//Ajoute des forces à un point du monde sur le rigidbody
 		static void AddForceAtPoint(Position& pos, RigidBody& rb, const Vector3D& force, const Vector3D& point)
 		{
 			Vector3D pt = point;
@@ -96,10 +104,14 @@ namespace team4_game_engine::physics {
 
 			rb.isAwake = true;
 		}
+
+		//Booléen de physique
 		static bool doPhysicsStep;
 		static bool doCollisionStep;
 		static bool doNextStep;
 		static bool useFixedDeltatime;
+
+		//Calcule de durée d'étape fixe physique
 		static int physicsStepPerSecond;
 		static float physicsStepTime;
 	};

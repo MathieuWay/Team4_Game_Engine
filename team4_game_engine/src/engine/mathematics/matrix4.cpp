@@ -216,23 +216,37 @@ namespace team4_game_engine::engine::mathematics {
 			vector.z * data[10]
 		);
 	}
-
+	/*
+	permet de passer un Vector3D d'un repere local vers un repere global
+	*/
 	Vector3D Matrix4::localToWorld(const Vector3D& local, const Matrix4& transform) {
 		return transform.transform(local);
 	}
 
+	/*
+	permet de passer un Vector3D d'un repere global vers un repere local
+	*/
 	Vector3D Matrix4::worldToLocal(const Vector3D& world, const Matrix4& transform) {
 		return transform.transformInverse(world);
 	}
 
+	/*
+	permet de passer un Vector3D de direction d'un repere local vers un repere global
+	*/
 	Vector3D Matrix4::localToWorldDirn(const Vector3D& local, const Matrix4& transform) {
 		return transform.transformDirection(local);
 	}
 
+	/*
+	permet de passer un Vector3D de direction d'un repere global vers un repere local
+	*/
 	Vector3D Matrix4::worldToLocalDirn(const Vector3D& world, const Matrix4& transform) {
 		return transform.transformInverseDirection(world);
 	}
 
+	/*
+	affiche la Matrix4
+	*/
 	void Matrix4::printMatrix4() {
 		std::cout << "m1 = " << data[0] << " m2 = " << data[1] << " m3 = " << data[2] << " m4 = " << data[3] << std::endl;
 		std::cout << "m5 = " << data[4] << " m6 = " << data[5] << " m7 = " << data[6] << " m8 = " << data[7] << std::endl;

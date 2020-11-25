@@ -57,12 +57,24 @@ namespace team4_game_engine::engine::mathematics {
 		*/
 		Vector3D transformInverseDirection(const Vector3D& vector) const;
 
+		/*
+		permet de passer un Vector3D d'un repere local vers un repere global
+		*/
 		static Vector3D localToWorld(const Vector3D& local, const Matrix4& transform);
-
+		
+		/*
+		permet de passer un Vector3D d'un repere global vers un repere local
+		*/
 		static Vector3D worldToLocal(const Vector3D& world, const Matrix4& transform);
 
+		/*
+		permet de passer un Vector3D de direction d'un repere local vers un repere global
+		*/
 		static Vector3D localToWorldDirn(const Vector3D& local, const Matrix4& transform);
 
+		/*
+		permet de passer un Vector3D de direction d'un repere global vers un repere local
+		*/
 		static Vector3D worldToLocalDirn(const Vector3D& world, const Matrix4& transform);
 
 		/*
