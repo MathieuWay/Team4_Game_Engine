@@ -16,23 +16,49 @@ namespace team4_game_engine::components {
 	};
 	struct RigidBody {
 	public:
+		//Collider de cube ou de sphere
 		Collider* collider;
+
+		//Velocite de deplacement
 		Vector3D linearVelocity;
+
+		//Velocite angulaire
 		Vector3D angularVelocity;
+
+		//Acceleration de deplacement
 		Vector3D acceleration;
+
+		//Acumulation des forces de deplacement
 		Vector3D accumulateLinearForces;
+
+		//Accumulation des forces angulaire
 		Vector3D accumulateAngularForces;
+
+		//Centre de Masse
 		Vector3D massCenter;
+
+		//Inverse de la masse
 		float inverseMass;
+
+		//Masse du rigidBody
 		float mass;
+
+		//Coefficient de restitution
 		float restitutionCoef;
+
+		//Methode de calcule de restitution
 		RestitutionCombine restitutionCombine;
 
-
+		//Matrice de transformation du repere local au repere du monde
 		Matrix4 transforMatrix;
+
+		//Tenseur d'inertie d'un cube ou d'une sphere
 		Matrix3 inverseInertiaTensor;
+
+		//Tenseur d'inertie transfomer dans le repere du monde
 		Matrix3 inverseInertiaTensorWorld;
 
+		//Si active, ne prend pas en compte les forces
 		bool isKinematic;
 
 		//Gravity
@@ -42,7 +68,9 @@ namespace team4_game_engine::components {
 		float linearDrag; // aka damping
 		float angularDrag; // aka damping
 
+		//Si active, l'objet a reçu une force
 		bool isAwake = false;
+
 		// Debug
 		bool showDebug = true;
 		Vector3D forceDebug = Vector3D();
@@ -70,6 +98,9 @@ namespace team4_game_engine::components {
 				inverseMass = 1 / _mass;
 			}
 		}
+
+		//DEBUG
+		#pragma region DEBUG
 
 		void OnInspectorGUI() {
 			if (collider) {
@@ -153,5 +184,6 @@ namespace team4_game_engine::components {
 
 			}
 		};
+		#pragma endregion
 	};
 }
