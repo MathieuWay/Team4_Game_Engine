@@ -30,6 +30,9 @@ namespace team4_game_engine::renderer::shape {
 				vertices.push_back(x);
 				vertices.push_back(y);
 				vertices.push_back(z);
+				vertices.push_back(x);
+				vertices.push_back(y);
+				vertices.push_back(z);
 			}
 		}
 		// generate CCW index list of sphere triangles
@@ -61,7 +64,7 @@ namespace team4_game_engine::renderer::shape {
 			}
 		}
 
-		const BufferLayout sphere_Vertexlayout = { {ShaderDataType::Float3, "a_Pos", components::ComponentType::NotInstanced}, };
+		const BufferLayout sphere_Vertexlayout = { {ShaderDataType::Float3, "a_Pos", components::ComponentType::NotInstanced}, {ShaderDataType::Float3, "a_Color", components::ComponentType::NotInstanced} };
 		const BufferLayout sphere_Instancelayout = { {ShaderDataType::Mat4, "model", components::ComponentType::Transform} };
 		Shader* sphere_shader = new Shader("shader.vs", "shader.fs");
 		// Push VAO to VAO List
