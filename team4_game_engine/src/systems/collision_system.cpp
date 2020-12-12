@@ -16,6 +16,7 @@ using namespace team4_game_engine::engine::mathematics;
 #include <team4_game_engine/components/position.hpp>
 #include <team4_game_engine/components/scale.hpp>
 #include <team4_game_engine/components/rigidbody.hpp>
+#include <team4_game_engine/components/colliders/plane_collider.hpp>
 #include <team4_game_engine/components/colliders/box_collider.hpp>
 #include <team4_game_engine/components/colliders/sphere_collider.hpp>
 using namespace team4_game_engine::components;
@@ -54,6 +55,7 @@ namespace team4_game_engine::systems {
 				Scale& scale = view.get<Scale>(*it);
 				RigidBody& rb = view.get<RigidBody>(*it);
 				pos.local = pos.local.sumVector(Vector3D::localToWorldDirn(rb.massCenter.invert(), rb.transforMatrix));
+				State a = { *it, pos, rot, scale, &rb };
 				if (rb.collider == nullptr) continue;
 					for (auto otherIt = it; otherIt != view.end(); otherIt++) {
 						if (otherIt == it) continue;
@@ -63,7 +65,6 @@ namespace team4_game_engine::systems {
 						RigidBody& otherRb = view.get<RigidBody>(*otherIt);
 						otherPos.local = otherPos.local.sumVector(Vector3D::localToWorldDirn(otherRb.massCenter.invert(), otherRb.transforMatrix));
 						if (otherRb.collider == nullptr) continue;
-						State a = { *it, pos, rot, scale, &rb };
 						State b = { *otherIt, otherPos, otherRot, otherScale, &otherRb };
 						if (rb.collider->GetShape() == otherRb.collider->GetShape()) {
 							// Same Shape
@@ -89,10 +90,18 @@ namespace team4_game_engine::systems {
 						}
 						else {
 							Collision* collision = nullptr;
-							if (a.rb->collider->GetShape() == Shape::Box)
+							if (a.rb->collider->GetShape() == Shape::Box && b.rb->collider->GetShape() == Shape::Sphere) {
 								collision = IsBoxToSphereColliding(a, b);
-							else
+							}
+							else if (a.rb->collider->GetShape() == Shape::Box && b.rb->collider->GetShape() == Shape::Sphere) {
 								collision = IsBoxToSphereColliding(b, a);
+							}
+							if ((a.rb->collider->GetShape() == Shape::Box && b.rb->collider->GetShape() == Shape::Plane)) {
+								IsBoxToPlaneColliding(a, b);
+							}
+							else if (a.rb->collider->GetShape() == Shape::Plane && b.rb->collider->GetShape() == Shape::Box) {
+								IsBoxToPlaneColliding(b, a);
+							}
 
 							if (collision != nullptr) {
 								collisions.push_back(collision);
@@ -155,11 +164,33 @@ namespace team4_game_engine::systems {
 			// No collision
 			return nullptr;
 		}
-
 		struct AABB
 		{
 			Vector3D min;
 			Vector3D max;
+		};
+		struct OBB {
+			Vector3D vertex[8];
+			OBB(State state) {
+				BoxData aBox = ((BoxCollider*)state.rb->collider)->GetBoxData();
+				vertex[0] = Vector3D(aBox.min.x, aBox.min.y, aBox.min.z);
+				vertex[1] = Vector3D(aBox.min.x, aBox.min.y, aBox.max.z);
+				vertex[2] = Vector3D(aBox.min.x, aBox.max.y, aBox.min.z);
+				vertex[3] = Vector3D(aBox.min.x, aBox.max.y, aBox.max.z);
+				vertex[4] = Vector3D(aBox.max.x, aBox.min.y, aBox.min.z);
+				vertex[5] = Vector3D(aBox.max.x, aBox.min.y, aBox.max.z);
+				vertex[6] = Vector3D(aBox.max.x, aBox.max.y, aBox.min.z);
+				vertex[7] = Vector3D(aBox.max.x, aBox.max.y, aBox.max.z);
+				for (int i = 0; i < 8; i++) vertex[i] = Matrix4().localToWorld(vertex[i], state.rb->transforMatrix);
+			}
+			//Vector3D c; // OBB center point
+			//Vector3D u[3];
+			//Scale e;
+			//OBB(State state) : c(state.pos.local), e(state.scale){
+			//	u[0] = Vector3D(state.rb->transforMatrix.data[0], state.rb->transforMatrix.data[1], state.rb->transforMatrix.data[2]);
+			//	u[1] = Vector3D(state.rb->transforMatrix.data[4], state.rb->transforMatrix.data[5], state.rb->transforMatrix.data[6]);
+			//	u[2] = Vector3D(state.rb->transforMatrix.data[8], state.rb->transforMatrix.data[9], state.rb->transforMatrix.data[10]);
+			//}
 		};
 		//Given point p, return the point q on or in AABB b that is closest to p
 		Vector3D ClosestPtPointAABB(Vector3D p, AABB box)
@@ -181,6 +212,7 @@ namespace team4_game_engine::systems {
 			q.z = v;
 			return q;
 		}
+
 		Vector3D GetNormalAABBAABB(Vector3D vec) {
 			Vector3D vecAbs = Vector3D(abs(vec.x), abs(vec.y), abs(vec.z));
 			if (vecAbs.x > vecAbs.y && vecAbs.x > vecAbs.z) {
@@ -193,6 +225,39 @@ namespace team4_game_engine::systems {
 				return Vector3D(0, 0, vec.z).normalize();
 			}
 		}
+
+		float DistanceWithPlane(Vector3D point, Vector3D normal, Vector3D planePosition) {
+			float offset = -normal.scalarProduct(planePosition);
+			float scalar = normal.scalarProduct(point);
+			float result = scalar + offset;
+			return result;
+		}
+
+		Collision* IsBoxToPlaneColliding(State a, State b) {
+			OBB aOBB = OBB(a);
+			PlaneData bPlane = ((PlaneCollider*)b.rb->collider)->GetPlaneData();
+			int i = 0;
+			float maxDistance = 0;
+			std::vector<int> verticesIndex = std::vector<int>();
+			float maxVertexIndex = 0;
+			while (i < 8) {
+				float distance = DistanceWithPlane(aOBB.vertex[i], Matrix4().localToWorldDirn(bPlane.normal, b.rb->transforMatrix), b.pos.local);
+				if(distance < maxDistance){
+					maxDistance = distance;
+					maxVertexIndex = i;
+					verticesIndex.clear();
+					verticesIndex.push_back(i);
+				}else if(distance < 0) {
+					verticesIndex.push_back(i);
+				}
+				i++;
+			}
+			if (verticesIndex.size()) {
+				spdlog::info("Collision detected count: {0}", verticesIndex.size());
+			}
+			return nullptr;
+		}
+
 		// check box to box
 		Collision* IsBoxToBoxColliding(State a, State b) {
 			BoxData aBox = ((BoxCollider*)a.rb->collider)->GetBoxData();
@@ -224,6 +289,7 @@ namespace team4_game_engine::systems {
 			}
 			return nullptr;
 		}
+
 		// Returns the squared distance between a point p and an AABB b
 		float SqDistPointAABB(Vector3D p, AABB box)
 		{
@@ -239,6 +305,7 @@ namespace team4_game_engine::systems {
 			if (v > box.max.z) sqDist += (v - box.max.z) * (v - box.max.z);
 			return sqDist;
 		}
+
 		Collision* IsBoxToSphereColliding(State box, State sphere) {
 			BoxData boxData = ((BoxCollider*)box.rb->collider)->GetBoxData();
 			boxData.min = boxData.min.VectorMultiplication(Vector3D(box.scale.x, box.scale.y, box.scale.z));
@@ -252,7 +319,6 @@ namespace team4_game_engine::systems {
 				// collision
 				entt::entity entites[2] = { box.entity, sphere.entity };
 				RigidBody* rigidbodies[2] = { box.rb, sphere.rb };
-
 				float restitutionCoef = 1.0f;
 				if (box.rb->restitutionCombine == sphere.rb->restitutionCombine) {
 					restitutionCoef = (sphere.rb->restitutionCoef + box.rb->restitutionCoef) / 2;
@@ -261,6 +327,7 @@ namespace team4_game_engine::systems {
 			}
 			return nullptr;
 		}
+
 		/*Collision* IsBoxToSphereColliding(State box, State sphere) {
 			BoxData boxData = ((BoxCollider*)box.rb->collider)->GetBoxData();
 			SphereData sphereData = ((SphereCollider*)sphere.rb->collider)->GetSphereData();

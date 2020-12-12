@@ -170,6 +170,37 @@ namespace team4_game_engine::engine {
 				0
 				));
 #pragma endregion
+			Shader* shader = new Shader("shader.vs", "shader.fs");
+			const BufferLayout Vertexlayout = { {ShaderDataType::Float3, "a_Pos", components::ComponentType::NotInstanced}, {ShaderDataType::Float3, "a_Color", components::ComponentType::NotInstanced} };
+			const BufferLayout Instancelayout = { {ShaderDataType::Mat4, "model", components::ComponentType::Transform} };
+#pragma region Plane_data
+			float plane_vertices[] = {
+				-0.5f, 0,  0.5f, 0, 1, 1,
+				 0.5f, 0,  0.5f, 1, 1, 1,
+				-0.5f, 0,  -0.5f, 0, 0, 1,
+				 0.5f, 0,  -0.5f, 1, 0, 1,
+			};
+
+			uint32_t plane_indices[] = {  // Triangles Strip indices
+				0, 1,
+				2, 3
+			};
+
+			// VAO: Vertex Array Object / VBO: Vertex Buffer Object / EBO: Element Buffer Object
+			// https://learnopengl.com/img/getting-started/vertex_array_objects.png
+			// Create Vertex Array
+			
+			// Push VAO to VAO List
+			Renderer3D::Instance().ms_meshs.push_back(std::make_shared<Mesh>(
+				"Plane",
+				std::vector<float>(plane_vertices, plane_vertices + sizeof plane_vertices / sizeof plane_vertices[0]),
+				std::vector<uint32_t>(plane_indices, plane_indices + sizeof plane_indices / sizeof plane_indices[0]),
+				Vertexlayout,
+				Instancelayout,
+				shader,
+				4
+				));
+#pragma endregion
 
 #pragma region Cube_data
 			// https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSChUMsWvzjIEAFE0smdkDk7ZkYoBb_hItqtg&usqp=CAU
@@ -201,15 +232,14 @@ namespace team4_game_engine::engine {
 			// Create Vertex Array
 			const BufferLayout cube_Vertexlayout = { {ShaderDataType::Float3, "a_Pos", components::ComponentType::NotInstanced}, {ShaderDataType::Float3, "a_Color", components::ComponentType::NotInstanced} };
 			const BufferLayout cube_Instancelayout = { {ShaderDataType::Mat4, "model", components::ComponentType::Transform}};
-			Shader* cube_shader = new Shader("shader.vs", "shader.fs");
 			// Push VAO to VAO List
 			Renderer3D::Instance().ms_meshs.push_back(std::make_shared<Mesh>(
 				"Cube",
 				std::vector<float>(vertices, vertices + sizeof vertices / sizeof vertices[0]),
 				std::vector<uint32_t>(indices, indices + sizeof indices / sizeof indices[0]),
-				cube_Vertexlayout,
-				cube_Instancelayout,
-				cube_shader,
+				Vertexlayout,
+				Instancelayout,
+				shader,
 				4
 				));
 #pragma endregion

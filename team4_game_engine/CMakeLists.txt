@@ -46,6 +46,7 @@ set(TEAM4_GAME_ENGINE_HEADERS
     include/team4_game_engine/components/colliders/collider.hpp
     include/team4_game_engine/components/colliders/box_collider.hpp
     include/team4_game_engine/components/colliders/sphere_collider.hpp
+    include/team4_game_engine/components/colliders/plane_collider.hpp
 
     # Physics
     include/team4_game_engine/engine/physics/physics.hpp

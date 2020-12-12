@@ -3,7 +3,8 @@
 namespace team4_game_engine::components {
 	enum class Shape {
 		Sphere,
-		Box
+		Box,
+		Plane
 	};
 	class ShapeData{};
 	class Collider {

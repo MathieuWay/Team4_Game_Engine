@@ -1,6 +1,5 @@
 #pragma once
 #include <team4_game_engine/components/colliders/collider.hpp>
-#include <glm/glm.hpp>
 
 namespace team4_game_engine::components{
 	class BoxData : public ShapeData {

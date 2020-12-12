@@ -98,7 +98,7 @@ namespace team4_game_engine::debug {
 		}
 		world.Registry().view<Position, RigidBody>().each([this, io](Position& pos, RigidBody& rb) {
 			// Debug Overlay
-			if (rb.showDebug) {
+			if (rb.showDebug && rb.mass > 0) {
 				ImGuiStyle& style = ImGui::GetStyle();
 				style.WindowBorderSize = 0.0f;
 				ImGui::SetNextWindowBgAlpha(0);
@@ -449,11 +449,14 @@ namespace team4_game_engine::debug {
 				if (ImGui::MenuItem("Empty")) {
 					engine::primitive::Empty("GameObject", parent);
 				}
+				if (ImGui::MenuItem("Plane")) {
+					engine::primitive::Plane("Plane", parent, 1);
+				}
 				if (ImGui::MenuItem("Cube")) {
-					engine::primitive::Cube("Cube", parent, 1);
+					engine::primitive::Cube("Cube", parent, 2);
 				}
 				if (ImGui::MenuItem("Sphere")) {
-					engine::primitive::Sphere("Sphere", parent, 2);
+					engine::primitive::Sphere("Sphere", parent, 3);
 				}
 				ImGui::EndMenu();
 			}
