@@ -1,4 +1,4 @@
-﻿#include <team4_game_engine/include/team4_game_engine/engine/physics/Contact.hpp>
+﻿#include <team4_game_engine/engine/physics/Contact.hpp>
 #include <iostream>
 
 namespace team4_game_engine::physics

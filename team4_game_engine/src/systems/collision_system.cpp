@@ -64,10 +64,10 @@ namespace team4_game_engine::systems {
 						Scale& otherScale = view.get<Scale>(*otherIt);
 						RigidBody& otherRb = view.get<RigidBody>(*otherIt);
 						otherPos.local = otherPos.local.sumVector(Vector3D::localToWorldDirn(otherRb.massCenter.invert(), otherRb.transforMatrix));
-						std::vector<Contact*> Contacts();
+						std::vector<Contact*> Contacts = std::vector<Contact*>();
 						Contacts.push_back(new Contact(Vector3D(), 1));
-						CollisionData::CollisionData(Contacts, rb, otherRb);
-						CollisionData::ResolveContact();
+						CollisionData coll = CollisionData(Contacts, rb, otherRb);
+						coll.ResolveContact();
 						if (otherRb.collider == nullptr) continue;
 						State a = { *it, pos, rot, scale, &rb };
 						State b = { *otherIt, otherPos, otherRot, otherScale, &otherRb };
