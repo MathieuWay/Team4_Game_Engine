@@ -553,8 +553,23 @@ namespace team4_game_engine::debug {
 						world->Registry().get<Rotation>(lastSelect).OnInspectorGUI();
 					break;
 				case team4_game_engine::components::ComponentType::Scale:
-					if (world->Registry().has<Scale>(lastSelect))
-						world->Registry().get<Scale>(lastSelect).OnInspectorGUI();
+					if (world->Registry().has<Scale>(lastSelect)) {
+						Scale& scale = world->Registry().get<Scale>(lastSelect);
+						scale.OnInspectorGUI();
+						scale.x; scale.y; scale.z;//Tu a accès aux valeur du scale
+						if (world->Registry().has<BoundingVolume>(lastSelect)) {
+							BoundingVolume& boudingVolume = world->Registry().get<BoundingVolume>(lastSelect);
+							if (scale.x >= scale.y && scale.x >= scale.z) {
+								boudingVolume.radius = scale.x;
+							}
+							else if (scale.y >= scale.x && scale.y >= scale.z) {
+								boudingVolume.radius = scale.y;
+							}
+							else {
+								boudingVolume.radius = scale.z;
+							}		
+						}
+					}
 					break;
 				case team4_game_engine::components::ComponentType::Color:
 					if (world->Registry().has<Color>(lastSelect))

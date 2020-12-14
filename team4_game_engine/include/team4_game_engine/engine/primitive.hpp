@@ -21,6 +21,7 @@ using namespace team4_game_engine::engine::mathematics;
 #include <team4_game_engine/components/model.hpp>
 #include <team4_game_engine/components/colliders/box_collider.hpp>
 #include <team4_game_engine/components/colliders/sphere_collider.hpp>
+#include <team4_game_engine/components/boundingVolume.hpp>
 using namespace team4_game_engine::components;
 
 namespace team4_game_engine::engine::primitive {
@@ -32,6 +33,8 @@ namespace team4_game_engine::engine::primitive {
 		if (parent != entt::null) {
 			world->Registry().get<Children>(parent).childrens.push_back(static_cast<entt::entity>(entity->EntityID()));
 		}
+		float radius = 1.0f;
+		entity->AddComponent<components::BoundingVolume>(radius);
 		return entity;
 	}
 

@@ -7,6 +7,7 @@
 #include <team4_game_engine/components/position.hpp>
 #include <team4_game_engine/components/rotation.hpp>
 #include <team4_game_engine/components/scale.hpp>
+#include <team4_game_engine/components/boundingVolume.hpp>
 
 namespace team4_game_engine::engine {
 	struct EntityState {
@@ -55,6 +56,9 @@ namespace team4_game_engine::engine {
 
 		components::Scale& Scale() { return GetComponent<components::Scale>(); }
 		//components::Scale Scale() const { return GetComponent<components::Scale>(); }
+
+		components::BoundingVolume& BoundingVolume() { return GetComponent<components::BoundingVolume>(); }
+
 	private:
 		World& m_world;
 		uint32_t m_entityID;

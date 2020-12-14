@@ -18,6 +18,7 @@ using namespace team4_game_engine::engine::mathematics;
 #include <team4_game_engine/components/rigidbody.hpp>
 #include <team4_game_engine/components/colliders/box_collider.hpp>
 #include <team4_game_engine/components/colliders/sphere_collider.hpp>
+#include <team4_game_engine\engine\mathematics\octTree.hpp>
 using namespace team4_game_engine::components;
 
 namespace team4_game_engine::systems {
@@ -47,6 +48,8 @@ namespace team4_game_engine::systems {
 			}
 			collisions.clear();
 
+			OctTree octTree = OctTree(Vector3D(0,0,0),Vector3D(25,25,25),0);
+
 			auto view = world.Registry().view<Position, Rotation, Scale, RigidBody>();
 			for (auto it = view.begin(); it != view.end(); it++){
 				Position pos = view.get<Position>(*it);
@@ -54,6 +57,9 @@ namespace team4_game_engine::systems {
 				Scale& scale = view.get<Scale>(*it);
 				RigidBody& rb = view.get<RigidBody>(*it);
 				pos.local = pos.local.sumVector(Vector3D::localToWorldDirn(rb.massCenter.invert(), rb.transforMatrix));
+
+				octTree.addEntity(*it);
+
 				if (rb.collider == nullptr) continue;
 					for (auto otherIt = it; otherIt != view.end(); otherIt++) {
 						if (otherIt == it) continue;
@@ -126,6 +132,8 @@ namespace team4_game_engine::systems {
 						collisions.push_back(new Collision(entites, rigidbodies, rb.restitutionCoef, abs(groundPenetration), Vector3D(0, 1, 0)));
 					}
 				}
+
+			vector<collisionCouple> test = octTree.query(vector<collisionCouple> {{}});
 			resolver.resolveCollisions(collisions, delta);
 		}
 		// check sphere to sphere collision
