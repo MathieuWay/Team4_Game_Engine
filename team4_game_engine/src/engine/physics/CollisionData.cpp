@@ -19,7 +19,7 @@ namespace team4_game_engine::physics
 		if (Prim1.mass != 0) {
 			spdlog::info("Il y a {0} points de contact dans Prim1:", contact.size());
 			for (int i = 0; i < contact.size(); i++) {
-				spdlog::info("Point de contact: {0}", Matrix4::worldToLocal(contact[i]->contactPoint, Prim1.transforMatrix).GetVectorData());
+				spdlog::info("Point de contact: {0}", contact[i]->contactPoint.GetVectorData());
 				spdlog::info("Normale du point de contact: {0}", contact[i]->contactNormal.GetVectorData());
 				spdlog::info("Le facteur d'interpenetration est: {0}", contact[i]->penetration);
 			}
@@ -28,7 +28,7 @@ namespace team4_game_engine::physics
 		if (Prim2.mass != 0) {
 			spdlog::info("Il y a {0} points de contact dans Prim2:", contact.size());
 			for (int i = 0; i < contact.size(); i++) {
-				spdlog::info("Point de contact: {0}", Matrix4::worldToLocal(contact[i]->contactPoint, Prim2.transforMatrix).GetVectorData());
+				spdlog::info("Point de contact: {0}", contact[i]->contactPoint.GetVectorData());
 				spdlog::info("Normale du point de contact: {0}", contact[i]->contactNormal.GetVectorData());
 				spdlog::info("Le facteur d'interpenetration est: {0}", contact[i]->penetration);
 			}
