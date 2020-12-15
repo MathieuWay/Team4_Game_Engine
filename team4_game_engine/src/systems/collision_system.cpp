@@ -47,7 +47,7 @@ namespace team4_game_engine::systems {
 				delete collision;
 			}
 			collisions.clear();
-
+			// cree un octree
 			OctTree octTree = OctTree(Vector3D(0,0,0),Vector3D(25,25,25),0);
 
 			auto view = world.Registry().view<Position, Rotation, Scale, RigidBody>();
@@ -57,7 +57,7 @@ namespace team4_game_engine::systems {
 				Scale& scale = view.get<Scale>(*it);
 				RigidBody& rb = view.get<RigidBody>(*it);
 				pos.local = pos.local.sumVector(Vector3D::localToWorldDirn(rb.massCenter.invert(), rb.transforMatrix));
-
+				// test addEntity de l'octree
 				octTree.addEntity(*it);
 
 				if (rb.collider == nullptr) continue;
@@ -132,7 +132,7 @@ namespace team4_game_engine::systems {
 						collisions.push_back(new Collision(entites, rigidbodies, rb.restitutionCoef, abs(groundPenetration), Vector3D(0, 1, 0)));
 					}
 				}
-
+			// test resolve octree
 			vector<collisionCouple> test = octTree.query(vector<collisionCouple> {{}});
 			resolver.resolveCollisions(collisions, delta);
 		}

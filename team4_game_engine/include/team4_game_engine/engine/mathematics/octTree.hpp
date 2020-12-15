@@ -34,7 +34,7 @@ namespace team4_game_engine::engine::mathematics {
 		
 		OctTree(Vector3D position, Vector3D size, int depth);
 
-		bool IntersectWith(entt::entity entity);
+		vector<int> IntersectWith(entt::entity entity, int index, vector<int> toInsert);
 			
 		unsigned int getChildrenIndex(const Vector3D& objectCenter);
 
