@@ -45,7 +45,7 @@ namespace team4_game_engine::debug {
 		if (showGrid) ImGuizmo::DrawGrid(&camera.view[0][0], &projection[0][0], &glm::mat4(1.0f)[0][0], 10 * glm::ceil(distance / 10));
 		ImGuiIO& io = ImGui::GetIO();
 		ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
-		ImGuizmo::ViewManipulate(&camera.view[0][0], this->distance, ImVec2(0, 0), ImVec2(io.DisplaySize.x / 7.5, io.DisplaySize.x / 7.5), IM_COL32(0, 0, 0, 75));
+		ImGuizmo::ViewManipulate(&camera.view[0][0], SceneView::Instance().GetDistance(), ImVec2(0, 0), ImVec2(io.DisplaySize.x / 7.5, io.DisplaySize.x / 7.5), IM_COL32(0, 0, 0, 75));
 
 
 		if (ImGui::IsKeyPressed(GLFW_KEY_R)) // r Key
@@ -665,34 +665,32 @@ namespace team4_game_engine::debug {
 	void DearImGuiOverlay::BuildRoom() {
 		entt::entity walls = static_cast<entt::entity>(engine::primitive::Empty("Walls", entt::null)->EntityID());
 		Entity* plane;
-		float height = 5;
-		float distanceFromCenter = 5;
 		float planeSize = 10;
 		plane = engine::primitive::Plane("Ground", walls, 1);
-		plane->Position() = { 0, height - planeSize/2, 0 };
+		//plane->Position() = { 0, 0, 0 };
 		plane->Scale() = { planeSize, planeSize, planeSize };
 
 		plane = engine::primitive::Plane("right", walls, 1);
-		plane->Position() = { distanceFromCenter, height, 0 };
+		plane->Position() = { planeSize/2, planeSize/4, 0 };
 		plane->Rotation() = { 0.707, 0, 0, 0.7070 };
-		plane->Scale() = { planeSize, planeSize, planeSize };
+		plane->Scale() = { planeSize/2, planeSize, planeSize };
 
 		plane = engine::primitive::Plane("Left", walls, 1);
-		plane->Position() = { -distanceFromCenter, height, 0 };
+		plane->Position() = { -planeSize/2, planeSize/4, 0 };
 		plane->Rotation() = { 0.707, 0, 0, -0.7070 };
-		plane->Scale() = { planeSize, planeSize, planeSize };
+		plane->Scale() = { planeSize/2, planeSize, planeSize };
 
 		plane = engine::primitive::Plane("front", walls, 1);
-		plane->Position() = { 0, height, distanceFromCenter };
+		plane->Position() = { 0, planeSize/4, planeSize/2 };
 		plane->Rotation() = { 0.707, -0.7070, 0, 0 };
-		plane->Scale() = { planeSize, planeSize, planeSize };
+		plane->Scale() = { planeSize, planeSize, planeSize/2 };
 
 		plane = engine::primitive::Plane("back", walls, 1);
-		plane->Position() = { 0, height, -distanceFromCenter };
+		plane->Position() = { 0, planeSize/4, -planeSize/2 };
 		plane->Rotation() = { 0.707, 0.7070, 0, 0 };
-		plane->Scale() = { planeSize, planeSize, planeSize };
+		plane->Scale() = { planeSize, planeSize, planeSize/2 };
 
 		Entity* cube = engine::primitive::Cube("Cube", entt::null, 2);
-		cube->Position() = { 0, height, 0 };
+		cube->Position() = { 0, planeSize/2, 0 };
 	}
 }

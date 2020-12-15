@@ -95,6 +95,12 @@ namespace team4_game_engine::engine {
 			glfwSetWindowCloseCallback(m_window, [](GLFWwindow* window) {
 				Engine::Instance().Stop();
 			});
+
+
+			glfwSetScrollCallback(m_window, [](GLFWwindow* window, double xoffset, double yoffset) {
+				SceneView::Instance().OnScroll(yoffset);
+			});
+
 			glfwSwapInterval(1);
 			glfwMakeContextCurrent(m_window);
 			if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {

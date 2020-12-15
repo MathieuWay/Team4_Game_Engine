@@ -22,20 +22,42 @@ namespace team4_game_engine::engine {
 		glm::mat4 GetProjection() {
 			return m_projection;
 		}
+		float GetDistance() {
+			return distance;
+		}
+		void SetDistance(float dist) {
+			float* mat = glm::value_ptr(m_component.view);
+			m_component.view = glm::translate(m_component.view, glm::vec3(mat[2], mat[6], mat[10]) * -(dist - distance));
+			distance = dist;
+		}
+
+		//Zooming / Dezooming
+		void OnScroll(double delta) {
+			float deltaValue = (float)-delta * 0.1f;
+			float newDistance = distance + deltaValue;
+			if (newDistance < 0.5f) {
+				newDistance = 0.5f;
+			}
+			SetDistance(newDistance);
+			//if (newDistance > 0.5f) {
+			//	float* mat = glm::value_ptr(Scene::Instance()->view);
+			//	//https://i.stack.imgur.com/KW71r.jpg
+			//	Scene::Instance()->view = glm::translate(Scene::Instance()->view, glm::vec3(mat[2], mat[6], mat[10]) * -deltaValue);
+			//}
+		}
 	private:
 		SceneView() {
 			m_entityID = -1;
-
-			glm::mat4 view = glm::mat4(1.0f);
-			float* mat = glm::value_ptr(view);
-			view = glm::rotate(view, glm::radians(15.0f), glm::vec3(1, 0, 0));
-			view = glm::translate(view, glm::vec3(mat[2], mat[6], mat[10]) * -10.0f);
-
-			m_component = { view, glm::vec3(0.1f, 0.1f, 0.1f), 0.1f, 100, 70 };
+			distance = 10;
+			m_component = { glm::mat4(1.0f), glm::vec3(0.1f, 0.1f, 0.1f), 0.1f, 100, 70 };
+			m_component.view = glm::rotate(m_component.view, glm::radians(15.0f), glm::vec3(1, 0, 0));
+			float* mat = glm::value_ptr(m_component.view);
+			m_component.view = glm::translate(m_component.view, glm::vec3(mat[2], mat[6], mat[10]) * -distance);
 			m_projection = glm::mat4();
 		};
 		uint32_t m_entityID;
 		components::Camera m_component;
 		glm::mat4 m_projection;
+		float distance;
 	};
 }
