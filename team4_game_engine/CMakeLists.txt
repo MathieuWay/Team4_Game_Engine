@@ -23,14 +23,14 @@ set(TEAM4_GAME_ENGINE_HEADERS
     include/team4_game_engine/engine/mathematics/matrix3.hpp
     include/team4_game_engine/engine/mathematics/matrix4.hpp
     include/team4_game_engine/engine/mathematics/test_matrix4.hpp
-
+    include/team4_game_engine/engine/mathematics/octTree.hpp
     # systems
     include/team4_game_engine/systems/system.hpp
     include/team4_game_engine/systems/fps_counter.hpp
     include/team4_game_engine/systems/entity_viewer.hpp
     include/team4_game_engine/systems/physics_system.hpp
     include/team4_game_engine/systems/collision_system.hpp
-    
+     
 
     # components
     include/team4_game_engine/components/components.hpp
@@ -47,6 +47,7 @@ set(TEAM4_GAME_ENGINE_HEADERS
     include/team4_game_engine/components/colliders/box_collider.hpp
     include/team4_game_engine/components/colliders/sphere_collider.hpp
     include/team4_game_engine/components/colliders/plane_collider.hpp
+    include/team4_game_engine/components/boundingVolume.hpp
 
     # Physics
     include/team4_game_engine/engine/physics/physics.hpp
@@ -112,7 +113,8 @@ set(TEAM4_GAME_ENGINE_SOURCES
     src/engine/mathematics/vector3d.cpp
     src/engine/mathematics/quaternion.cpp
     src/engine/mathematics/matrix3.cpp
-    src/engine/mathematics/matrix4.cpp)
+    src/engine/mathematics/matrix4.cpp
+    src/engine/mathematics/octTree.cpp)
 
 add_library(team4_game_engine STATIC ${TEAM4_GAME_ENGINE_HEADERS} ${TEAM4_GAME_ENGINE_SOURCES})
 
