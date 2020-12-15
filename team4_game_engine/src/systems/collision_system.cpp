@@ -133,7 +133,7 @@ namespace team4_game_engine::systems {
 					}
 				}
 			// test resolve octree
-			vector<collisionCouple> test = octTree.query(vector<collisionCouple> {{}});
+			vector<collisionCouple> test = octTree.query(vector<collisionCouple> {});
 			resolver.resolveCollisions(collisions, delta);
 		}
 		// check sphere to sphere collision

@@ -609,16 +609,14 @@ namespace team4_game_engine::engine::mathematics {
 						collisionCouple couple;
 						couple.ent1 = this->entities[i];
 						couple.ent2 = this->entities[j];
-						if (couple.ent1 != couple.ent2) {
-							bool hasCouple = false;
-							for (int k = 0; k < resRegister.size(); k++) {
-								if ((resRegister[k].ent1 == couple.ent1 && resRegister[k].ent2 == couple.ent2) || (resRegister[k].ent1 == couple.ent2 && resRegister[k].ent2 == couple.ent1)) {
-									hasCouple = true;
-								}
+						bool hasCouple = false;
+						for (int k = 0; k < resRegister.size(); k++) {
+							if ((resRegister[k].ent1 == couple.ent1 && resRegister[k].ent2 == couple.ent2) || (resRegister[k].ent1 == couple.ent2 && resRegister[k].ent2 == couple.ent1)) {
+								hasCouple = true;
 							}
-							if (!hasCouple) {
-								resRegister.push_back(couple);
-							}
+						}
+						if (!hasCouple) {
+							resRegister.push_back(couple);
 						}
 					}
 				}
