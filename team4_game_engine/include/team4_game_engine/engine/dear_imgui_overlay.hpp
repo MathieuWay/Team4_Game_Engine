@@ -44,7 +44,7 @@ namespace team4_game_engine::debug {
 		void Inspector();
 		Vector3D DearImGuiOverlay::WorldToScreenCoordinate(glm::vec3 pos);
 		void DrawText(ImDrawList* draw_list, const char* text, ImVec2 pos, ImColor color = ImColor(255, 255, 255));
-
+		void BuildRoom();
 		// instantiate from tool
 		//void Instantiate(entt::entity parent, int mesh = -1);
 		// instantiate with position & velocity defined

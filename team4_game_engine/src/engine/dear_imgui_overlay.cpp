@@ -476,6 +476,10 @@ namespace team4_game_engine::debug {
 		ImGui::SameLine();
 		ImGui::Button("Add entity");
 		CreateEntityContextMenu(entt::null, 0, ImGuiPopupFlags_MouseButtonLeft);
+		ImGui::SameLine();
+		if (ImGui::Button("Build Room")) {
+			BuildRoom();
+		}
 		std::string label = "Scene (" + std::to_string(world->Registry().alive()) + " Objects)";
 		if (ImGui::TreeNodeEx(label.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
 			CreateEntityContextMenu(entt::null, 1);
@@ -656,5 +660,39 @@ namespace team4_game_engine::debug {
 			color,
 			text,
 			0, 0.0f, 0);
+	}
+
+	void DearImGuiOverlay::BuildRoom() {
+		entt::entity walls = static_cast<entt::entity>(engine::primitive::Empty("Walls", entt::null)->EntityID());
+		Entity* plane;
+		float height = 5;
+		float distanceFromCenter = 5;
+		float planeSize = 10;
+		plane = engine::primitive::Plane("Ground", walls, 1);
+		plane->Position() = { 0, height - planeSize/2, 0 };
+		plane->Scale() = { planeSize, planeSize, planeSize };
+
+		plane = engine::primitive::Plane("right", walls, 1);
+		plane->Position() = { distanceFromCenter, height, 0 };
+		plane->Rotation() = { 0.707, 0, 0, 0.7070 };
+		plane->Scale() = { planeSize, planeSize, planeSize };
+
+		plane = engine::primitive::Plane("Left", walls, 1);
+		plane->Position() = { -distanceFromCenter, height, 0 };
+		plane->Rotation() = { 0.707, 0, 0, -0.7070 };
+		plane->Scale() = { planeSize, planeSize, planeSize };
+
+		plane = engine::primitive::Plane("front", walls, 1);
+		plane->Position() = { 0, height, distanceFromCenter };
+		plane->Rotation() = { 0.707, -0.7070, 0, 0 };
+		plane->Scale() = { planeSize, planeSize, planeSize };
+
+		plane = engine::primitive::Plane("back", walls, 1);
+		plane->Position() = { 0, height, -distanceFromCenter };
+		plane->Rotation() = { 0.707, 0.7070, 0, 0 };
+		plane->Scale() = { planeSize, planeSize, planeSize };
+
+		Entity* cube = engine::primitive::Cube("Cube", entt::null, 2);
+		cube->Position() = { 0, height, 0 };
 	}
 }
