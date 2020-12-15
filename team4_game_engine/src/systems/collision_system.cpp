@@ -156,7 +156,6 @@ namespace team4_game_engine::systems {
 			//		}
 			//	}
 			// test resolve octree
-			vector<collisionCouple> test = octTree.query(vector<collisionCouple> {});
 			//resolver.resolveCollisions(collisions, delta);
 
 			if (colRegistry.size() > 0 && Physics::doPhysicsStep) Physics::doPhysicsStep = false;
@@ -280,8 +279,7 @@ namespace team4_game_engine::systems {
 				i++;
 			}
 			if (verticesIndex.size()) {
-				spdlog::info("Collision detected count: {0}", verticesIndex.size());
-				return new CollisionData(verticesIndex, rbCube, rbPlane);
+				return new CollisionData(verticesIndex, cube, plane);
 			}
 			return nullptr;
 		}

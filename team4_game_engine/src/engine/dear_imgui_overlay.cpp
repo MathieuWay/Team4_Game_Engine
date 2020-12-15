@@ -706,6 +706,7 @@ namespace team4_game_engine::debug {
 		plane->Scale() = { planeSize, planeSize, planeSize/2 };
 
 		Entity* cube = engine::primitive::Cube("Cube", entt::null, 2);
-		cube->Position() = { 0, planeSize/2, 0 };
+		cube->Position() = { 0, planeSize/4, 0 };
+		cube->GetComponent<RigidBody>().useGravity = false;
 	}
 }

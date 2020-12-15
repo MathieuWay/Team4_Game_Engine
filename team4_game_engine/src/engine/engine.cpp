@@ -259,7 +259,7 @@ namespace team4_game_engine::engine {
 
 
 			spdlog::set_level(spdlog::level::debug);
-			m_systems.emplace_back(std::make_unique<systems::FPSCounter>());
+			//m_systems.emplace_back(std::make_unique<systems::FPSCounter>());
 			m_systems.emplace_back(std::make_unique<systems::PhysicsSystem>());
 			m_systems.emplace_back(std::make_unique<systems::CollisionSystem>(8));
 			//m_systems.emplace_back(std::make_unique<systems::EntityViewer>());

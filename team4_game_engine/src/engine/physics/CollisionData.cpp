@@ -1,12 +1,14 @@
 #include <team4_game_engine/engine/physics/CollisionData.hpp>
 #include <spdlog/spdlog.h>
+#include <team4_game_engine/engine/engine.hpp>
+#include <team4_game_engine/engine/world.hpp>
 #include <iostream>
 
 namespace team4_game_engine::physics 
 {
 	int CollisionData::remainContacts = 4;
 
-	CollisionData::CollisionData(std::vector<Contact*> _contact, RigidBody& _Prim1, RigidBody& _Prim2) : contact(_contact), Prim1(_Prim1), Prim2(_Prim2)
+	CollisionData::CollisionData(std::vector<Contact*> _contact, entt::entity _entity1, entt::entity _entity2) : contact(_contact), entity1(_entity1), entity2(_entity2)
 	{
 	}
 
@@ -16,23 +18,28 @@ namespace team4_game_engine::physics
 
 	void CollisionData::ResolveContact()
 	{
+		
+		RigidBody& Prim1 = engine::Engine::Instance().GetWorld().lock()->GetComponent<RigidBody>(entity1);
+		RigidBody& Prim2 = engine::Engine::Instance().GetWorld().lock()->GetComponent<RigidBody>(entity2);
 		if (Prim1.mass != 0) {
-			spdlog::info("Il y a {0} points de contact dans Prim1:", contact.size());
+			Name name = engine::Engine::Instance().GetWorld().lock()->GetComponent<Name>(entity1);
+			spdlog::info("Il y a {0} points de contact dans {1}:", contact.size(), name);
 			for (int i = 0; i < contact.size(); i++) {
 				spdlog::info("Point de contact: {0}", contact[i]->contactPoint.GetVectorData());
 				spdlog::info("Normale du point de contact: {0}", contact[i]->contactNormal.GetVectorData());
 				spdlog::info("Le facteur d'interpenetration est: {0}", contact[i]->penetration);
 			}
-				spdlog::info("Le coefficient de restitution de Prim1 est: {0}", Prim1.restitutionCoef);
+				spdlog::info("Le coefficient de restitution de {0} est: {1}", name, Prim1.restitutionCoef);
 		}
 		if (Prim2.mass != 0) {
-			spdlog::info("Il y a {0} points de contact dans Prim2:", contact.size());
+			Name name = engine::Engine::Instance().GetWorld().lock()->GetComponent<Name>(entity2);
+			spdlog::info("Il y a {0} points de contact dans {1}:", contact.size(), name);
 			for (int i = 0; i < contact.size(); i++) {
 				spdlog::info("Point de contact: {0}", contact[i]->contactPoint.GetVectorData());
 				spdlog::info("Normale du point de contact: {0}", contact[i]->contactNormal.GetVectorData());
 				spdlog::info("Le facteur d'interpenetration est: {0}", contact[i]->penetration);
 			}
-			spdlog::info("Le coefficient de restitution de Prim1 est: {0}", Prim2.restitutionCoef);
+			spdlog::info("Le coefficient de restitution de {0} est: {1}", name, Prim2.restitutionCoef);
 		}
 		for (int i = 0; i < contact.size(); i++)
 		{
