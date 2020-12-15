@@ -19,7 +19,7 @@ namespace team4_game_engine::engine::mathematics {
 
 	class OctTree {
 	public:
-		const int maxEntities = 2;
+		const int maxEntities = 1;
 		const int MaxDepth = 3;
 
 		
