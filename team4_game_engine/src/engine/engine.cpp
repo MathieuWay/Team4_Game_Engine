@@ -181,10 +181,10 @@ namespace team4_game_engine::engine {
 			const BufferLayout Instancelayout = { {ShaderDataType::Mat4, "model", components::ComponentType::Transform} };
 #pragma region Plane_data
 			float plane_vertices[] = {
-				-0.5f, 0,  0.5f, 0, 1, 1,
-				 0.5f, 0,  0.5f, 1, 1, 1,
-				-0.5f, 0,  -0.5f, 0, 0, 1,
-				 0.5f, 0,  -0.5f, 1, 0, 1,
+				-0.5f, 0,  0.5f, 0, 1, 0,
+				 0.5f, 0,  0.5f, 1, 1, 0,
+				-0.5f, 0,  -0.5f, 0, 0, 0,
+				 0.5f, 0,  -0.5f, 1, 0, 0,
 			};
 
 			uint32_t plane_indices[] = {  // Triangles Strip indices
