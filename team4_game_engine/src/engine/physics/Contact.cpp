@@ -3,9 +3,9 @@
 
 namespace team4_game_engine::physics
 {
-    Contact::Contact(Vector3D _contactPoint,  float _penetration) {
+    Contact::Contact(Vector3D _contactPoint, Vector3D _contactNormal, float _penetration) {
         this->contactPoint = _contactPoint;
-        this->contactNormal = _contactPoint.normalize();
+        this->contactNormal = _contactNormal;
         this->penetration = _penetration;
     }
 

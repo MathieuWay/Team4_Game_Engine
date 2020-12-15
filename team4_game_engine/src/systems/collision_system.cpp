@@ -5,6 +5,7 @@
 #include <team4_game_engine/engine/physics/physics.hpp>
 #include <team4_game_engine/engine/physics/collision.hpp>
 #include <team4_game_engine/engine/physics/collision_resolver.hpp>
+#include <team4_game_engine/engine/physics/collision_registry.hpp>
 #include <team4_game_engine/engine/physics/CollisionData.hpp>
 #include <team4_game_engine/engine/physics/Contact.hpp>
 using namespace team4_game_engine::physics;
@@ -33,7 +34,7 @@ namespace team4_game_engine::systems {
 	};
 	class CollisionSystemImpl {
 	public:
-		CollisionSystemImpl(int resolveIteration) : resolver(resolveIteration){
+		CollisionSystemImpl(int resolveIteration) : resolver(resolveIteration) , colRegistry(resolveIteration){
 		}
 		void Update(std::chrono::milliseconds deltatime, engine::World& world) {
 			if (!Physics::doPhysicsStep && !Physics::doNextStep) return;
@@ -66,10 +67,6 @@ namespace team4_game_engine::systems {
 						Scale& otherScale = view.get<Scale>(*otherIt);
 						RigidBody& otherRb = view.get<RigidBody>(*otherIt);
 						otherPos.local = otherPos.local.sumVector(Vector3D::localToWorldDirn(otherRb.massCenter.invert(), otherRb.transforMatrix));
-						std::vector<Contact*> Contacts = std::vector<Contact*>();
-						Contacts.push_back(new Contact(Vector3D(), 1));
-						CollisionData coll = CollisionData(Contacts, rb, otherRb);
-						coll.ResolveContact();
 						if (otherRb.collider == nullptr) continue;
 						State b = { *otherIt, otherPos, otherRot, otherScale, &otherRb };
 						if (rb.collider->GetShape() == otherRb.collider->GetShape()) {
@@ -102,12 +99,14 @@ namespace team4_game_engine::systems {
 							else if (a.rb->collider->GetShape() == Shape::Box && b.rb->collider->GetShape() == Shape::Sphere) {
 								collision = IsBoxToSphereColliding(b, a);
 							}
+							CollisionData* collisionData = nullptr;
 							if ((a.rb->collider->GetShape() == Shape::Box && b.rb->collider->GetShape() == Shape::Plane)) {
-								IsBoxToPlaneColliding(a, b);
+								collisionData = IsBoxToPlaneColliding(a, b);
 							}
 							else if (a.rb->collider->GetShape() == Shape::Plane && b.rb->collider->GetShape() == Shape::Box) {
-								IsBoxToPlaneColliding(b, a);
+								collisionData = IsBoxToPlaneColliding(b, a);
 							}
+							if (collisionData != nullptr) colRegistry.AddCollision(collisionData);
 
 							if (collision != nullptr) {
 								collisions.push_back(collision);
@@ -142,6 +141,9 @@ namespace team4_game_engine::systems {
 					}
 				}
 			resolver.resolveCollisions(collisions, delta);
+
+			if (colRegistry.size() > 0 && Physics::doPhysicsStep) Physics::doPhysicsStep = false;
+			colRegistry.Resolve();
 		}
 		// check sphere to sphere collision
 		Collision* IsColliding(State a, State b) {
@@ -239,27 +241,27 @@ namespace team4_game_engine::systems {
 			return result;
 		}
 
-		Collision* IsBoxToPlaneColliding(State a, State b) {
+		CollisionData* IsBoxToPlaneColliding(State a, State b) {
 			OBB aOBB = OBB(a);
 			PlaneData bPlane = ((PlaneCollider*)b.rb->collider)->GetPlaneData();
 			int i = 0;
 			float maxDistance = 0;
-			std::vector<int> verticesIndex = std::vector<int>();
+			std::vector<Contact*> verticesIndex = std::vector<Contact*>();
 			float maxVertexIndex = 0;
 			while (i < 8) {
 				float distance = DistanceWithPlane(aOBB.vertex[i], Matrix4().localToWorldDirn(bPlane.normal, b.rb->transforMatrix), b.pos.local);
-				if(distance < maxDistance){
-					maxDistance = distance;
-					maxVertexIndex = i;
-					verticesIndex.clear();
-					verticesIndex.push_back(i);
-				}else if(distance < 0) {
-					verticesIndex.push_back(i);
+				if(distance < 0) {
+					verticesIndex.push_back(new Contact(
+						aOBB.vertex[i],
+						Matrix4().localToWorldDirn(bPlane.normal, b.rb->transforMatrix),
+						distance
+					));
 				}
 				i++;
 			}
 			if (verticesIndex.size()) {
 				spdlog::info("Collision detected count: {0}", verticesIndex.size());
+				return new CollisionData(verticesIndex, *a.rb, *b.rb);
 			}
 			return nullptr;
 		}
@@ -362,6 +364,7 @@ namespace team4_game_engine::systems {
 		std::chrono::milliseconds m_totalMilli = 0ms;
 		std::vector<Collision*> collisions;
 		CollisionResolver resolver;
+		CollisionRegistry colRegistry;
 
 	};
 

@@ -12,7 +12,7 @@ namespace team4_game_engine::physics
         Vector3D contactNormal;
         float penetration;
 
-        Contact(Vector3D _contactPoint, float _penetration);
+        Contact(Vector3D _contactPoint, Vector3D contactNormal, float _penetration);
         ~Contact();
     };
 }

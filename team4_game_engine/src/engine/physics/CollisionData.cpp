@@ -21,7 +21,7 @@ namespace team4_game_engine::physics
 			for (int i = 0; i < contact.size(); i++) {
 				spdlog::info("Point de contact: {0}", Matrix4::worldToLocal(contact[i]->contactPoint, Prim1.transforMatrix).GetVectorData());
 				spdlog::info("Normale du point de contact: {0}", contact[i]->contactNormal.GetVectorData());
-				spdlog::info("Le facteur d'interp¨¦n¨¦tration est: {0}", contact[i]->penetration);
+				spdlog::info("Le facteur d'interpenetration est: {0}", contact[i]->penetration);
 			}
 				spdlog::info("Le coefficient de restitution de Prim1 est: {0}", Prim1.restitutionCoef);
 		}
@@ -30,9 +30,14 @@ namespace team4_game_engine::physics
 			for (int i = 0; i < contact.size(); i++) {
 				spdlog::info("Point de contact: {0}", Matrix4::worldToLocal(contact[i]->contactPoint, Prim2.transforMatrix).GetVectorData());
 				spdlog::info("Normale du point de contact: {0}", contact[i]->contactNormal.GetVectorData());
-				spdlog::info("Le facteur d'interp¨¦n¨¦tration est: {0}", contact[i]->penetration);
+				spdlog::info("Le facteur d'interpenetration est: {0}", contact[i]->penetration);
 			}
 			spdlog::info("Le coefficient de restitution de Prim1 est: {0}", Prim2.restitutionCoef);
 		}
+		for (int i = 0; i < contact.size(); i++)
+		{
+			delete contact[i];
+		}
+		contact.clear();
 	}
 }

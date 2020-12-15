@@ -52,6 +52,7 @@ set(TEAM4_GAME_ENGINE_HEADERS
     include/team4_game_engine/engine/physics/physics.hpp
     include/team4_game_engine/engine/physics/collision.hpp
     include/team4_game_engine/engine/physics/collision_resolver.hpp
+    include/team4_game_engine/engine/physics/collision_registry.hpp
     include/team4_game_engine/engine/physics/CollisionData.hpp
     include/team4_game_engine/engine/physics/Contact.hpp
     # include/team4_game_engine/engine/physics/forces_generators/force_generator.hpp
@@ -96,8 +97,9 @@ set(TEAM4_GAME_ENGINE_SOURCES
     src/engine/physics/physics.cpp
     src/engine/physics/collision.cpp
     src/engine/physics/collision_resolver.cpp
-     src/engine/physics/CollisionData.cpp
-     src/engine/physics/Contact.cpp
+    src/engine/physics/collision_registry.cpp
+    src/engine/physics/CollisionData.cpp
+    src/engine/physics/Contact.cpp
     src/engine/physics/forces_generators/gravity.cpp
     src/engine/physics/forces_generators/drag.cpp
     src/engine/physics/forces_generators/anchored_spring.cpp
