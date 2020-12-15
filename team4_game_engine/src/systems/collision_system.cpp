@@ -5,6 +5,8 @@
 #include <team4_game_engine/engine/physics/physics.hpp>
 #include <team4_game_engine/engine/physics/collision.hpp>
 #include <team4_game_engine/engine/physics/collision_resolver.hpp>
+#include <team4_game_engine/engine/physics/CollisionData.hpp>
+#include <team4_game_engine/engine/physics/Contact.hpp>
 using namespace team4_game_engine::physics;
 
 #include <team4_game_engine/engine/engine.hpp>
@@ -64,6 +66,10 @@ namespace team4_game_engine::systems {
 						Scale& otherScale = view.get<Scale>(*otherIt);
 						RigidBody& otherRb = view.get<RigidBody>(*otherIt);
 						otherPos.local = otherPos.local.sumVector(Vector3D::localToWorldDirn(otherRb.massCenter.invert(), otherRb.transforMatrix));
+						std::vector<Contact*> Contacts = std::vector<Contact*>();
+						Contacts.push_back(new Contact(Vector3D(), 1));
+						CollisionData coll = CollisionData(Contacts, rb, otherRb);
+						coll.ResolveContact();
 						if (otherRb.collider == nullptr) continue;
 						State b = { *otherIt, otherPos, otherRot, otherScale, &otherRb };
 						if (rb.collider->GetShape() == otherRb.collider->GetShape()) {

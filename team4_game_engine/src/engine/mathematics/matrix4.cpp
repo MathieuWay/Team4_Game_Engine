@@ -70,7 +70,7 @@ namespace team4_game_engine::engine::mathematics {
 	*/
 	void Matrix4::setInverse(const Matrix4& m) {
 		/*
-		si le determinant est egale à 0 la matrice n'est pas inversible
+		si le determinant est egale ?0 la matrice n'est pas inversible
 		*/
 		float det = m.getDeterminant();
 		if (det == 0) {
