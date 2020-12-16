@@ -32,16 +32,21 @@ namespace team4_game_engine::engine::mathematics {
 		OctTree* child[8];
 		vector<entt::entity> entities;
 		
+		// cree un octTree d'une taille size a une certaine position(correspond au point centrale) et a une profondeur dans l'octTree 
 		OctTree(Vector3D position, Vector3D size, int depth);
 
+		//Verifie si l'entity est en colission avec les Octree enfants a cote de l'Octree numero index
 		vector<int> IntersectWith(entt::entity entity, int index, vector<int> toInsert);
 			
 		unsigned int getChildrenIndex(const Vector3D& objectCenter);
-
+		
+		// ajoute une entity à l'octree et l'envoie dans le bonne enfant si il y en a 
 		void addEntity(entt::entity entity);
 
+		// divise l'octree en 8 nouveaux octree enfants
 		void divide();
 
+		// recupere des couples de collision a tester grace à l'Octree
 		vector<collisionCouple> query(vector<collisionCouple>& resRegister);
 	};
 
