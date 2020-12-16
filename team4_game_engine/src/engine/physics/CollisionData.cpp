@@ -18,7 +18,8 @@ namespace team4_game_engine::physics
 
 	void CollisionData::ResolveContact()
 	{
-		
+		//affichage des points de contact, des normales, des facteurs d'interpenetrations et des coefficients de restitution pour chaque contact entre deux objets
+		//Pour les deux objets si leur masse n'est pas egale a 0
 		RigidBody& Prim1 = engine::Engine::Instance().GetWorld().lock()->GetComponent<RigidBody>(entity1);
 		RigidBody& Prim2 = engine::Engine::Instance().GetWorld().lock()->GetComponent<RigidBody>(entity2);
 		if (Prim1.mass != 0) {
