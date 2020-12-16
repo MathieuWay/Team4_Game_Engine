@@ -20,10 +20,6 @@ add_subdirectory(extern)
 # add main library code
 add_subdirectory(team4_game_engine)
 
-# add text code
-if(TEAM4_GAME_ENGINE_BUILD_TESTS)
-    add_subdirectory(team4_game_engine_test)
-endif()
 # add examples code
 if(TEAM4_GAME_ENGINE_BUILD_EXAMPLES)
     add_subdirectory(examples)
