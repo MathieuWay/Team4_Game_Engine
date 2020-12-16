@@ -10,6 +10,7 @@ Raccourcie clavier (AZERTY) :
 A : Outil de translation
 Z : Outil de rotation
 E : Outil de taille
+R : Aucun Outil
 
 X : Alterne les outils pour utilisé les axes Local ou World
 
