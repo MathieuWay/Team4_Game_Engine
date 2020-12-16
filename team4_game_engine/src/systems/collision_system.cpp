@@ -26,230 +26,85 @@ using namespace team4_game_engine::engine::mathematics;
 using namespace team4_game_engine::components;
 
 namespace team4_game_engine::systems {
-	struct State{
-		entt::entity entity;
-		Position pos;
-		Rotation& rot;
-		Scale& scale;
-		RigidBody* rb;
+	struct OBB {
+		Vector3D vertex[8];
+		OBB(RigidBody rb) {
+			BoxData aBox = ((BoxCollider*)rb.collider)->GetBoxData();
+			vertex[0] = Vector3D(aBox.min.x, aBox.min.y, aBox.min.z);
+			vertex[1] = Vector3D(aBox.min.x, aBox.min.y, aBox.max.z);
+			vertex[2] = Vector3D(aBox.min.x, aBox.max.y, aBox.min.z);
+			vertex[3] = Vector3D(aBox.min.x, aBox.max.y, aBox.max.z);
+			vertex[4] = Vector3D(aBox.max.x, aBox.min.y, aBox.min.z);
+			vertex[5] = Vector3D(aBox.max.x, aBox.min.y, aBox.max.z);
+			vertex[6] = Vector3D(aBox.max.x, aBox.max.y, aBox.min.z);
+			vertex[7] = Vector3D(aBox.max.x, aBox.max.y, aBox.max.z);
+			for (int i = 0; i < 8; i++) vertex[i] = Matrix4().localToWorld(vertex[i], rb.transforMatrix);
+		}
 	};
 	class CollisionSystemImpl {
 	public:
-		CollisionSystemImpl(int resolveIteration) : resolver(resolveIteration) , colRegistry(resolveIteration){
+		CollisionSystemImpl(int resolveIteration) : colRegistry(resolveIteration){
 		}
+
+		// Boucle physique
 		void Update(std::chrono::milliseconds deltatime, engine::World& world) {
+			// Si la simulation est en pause ou que la prochaine frame n'a pas été demandé on n'execute pas le reste de la fonction
 			if (!Physics::doPhysicsStep && !Physics::doNextStep) return;
+			// Si les collisions de la simulation ne sont pas activé on n'execute pas le reste de la fonction
 			if (!Physics::doCollisionStep) return;
+
+			// Si la simulation utilise le un delta fixe alors on vérifie que le délai a bien été effectué
 			if (Physics::useFixedDeltatime) {
 				m_totalMilli += deltatime;
 				if (m_totalMilli < 1s) return;
 				m_totalMilli = 0ms;
 			}
+
+			// Calcule du deltatime
 			float delta = Physics::useFixedDeltatime ? Physics::physicsStepTime : (float)deltatime.count() / (float)1000;
-			for (auto& collision : collisions)
-			{
-				delete collision;
-			}
-			collisions.clear();
-			// cree un octree
+
+			// Octree
 			OctTree octTree = OctTree(Vector3D(0,0,0),Vector3D(25,25,25),0);
 			auto view = world.Registry().view<Position, Rotation, Scale, RigidBody, BoundingVolume>();
+			// insere chaque entité dans l'octree
 			for (auto it = view.begin(); it != view.end(); it++) {
 				octTree.addEntity(*it);
 			}
+			// Recupere la liste des collisions possible provenant de l'octree
 			std::vector<collisionCouple> collisions = octTree.query(std::vector<collisionCouple>());
+
+			// boucle sur les collisions
 			for (int i = 0; i < collisions.size(); i++)
 			{
 				RigidBody& rbA = view.get<RigidBody>(collisions[i].ent1);
 				RigidBody& rbB = view.get<RigidBody>(collisions[i].ent2);
 				CollisionData* collisionData = nullptr;
+
+				// Si collision entre Box & Plane
 				if ((rbA.collider->GetShape() == Shape::Box && rbB.collider->GetShape() == Shape::Plane)) {
 					collisionData = IsBoxToPlaneColliding(collisions[i].ent1, collisions[i].ent2);
 				}
 				else if (rbA.collider->GetShape() == Shape::Plane && rbB.collider->GetShape() == Shape::Box) {
 					collisionData = IsBoxToPlaneColliding(collisions[i].ent2, collisions[i].ent1);
 				}
+				// Si collision entre Box & Box
+				//if ((rbA.collider->GetShape() == Shape::Box && rbB.collider->GetShape() == Shape::Box)) {
+				//	collisionData = IsBoxToBoxColliding(collisions[i].ent1, collisions[i].ent2);
+				//}
+
+				// Si il y a belle et bien une collision on l'ajoute au registre
 				if (collisionData != nullptr) colRegistry.AddCollision(collisionData);
+
 			}
-			//auto view = world.Registry().view<Position, Rotation, Scale, RigidBody>();
-			//for (auto it = view.begin(); it != view.end(); it++){
-			//	Position pos = view.get<Position>(*it);
-			//	Rotation& rot = view.get<Rotation>(*it);
-			//	Scale& scale = view.get<Scale>(*it);
-			//	RigidBody& rb = view.get<RigidBody>(*it);
-			//	pos.local = pos.local.sumVector(Vector3D::localToWorldDirn(rb.massCenter.invert(), rb.transforMatrix));
-			//	State a = { *it, pos, rot, scale, &rb };
-			//	// test addEntity de l'octree
-			//	octTree.addEntity(*it);
 
-			//	if (rb.collider == nullptr) continue;
-			//		for (auto otherIt = it; otherIt != view.end(); otherIt++) {
-			//			if (otherIt == it) continue;
-			//			Position otherPos = view.get<Position>(*otherIt);
-			//			Rotation& otherRot = view.get<Rotation>(*otherIt);
-			//			Scale& otherScale = view.get<Scale>(*otherIt);
-			//			RigidBody& otherRb = view.get<RigidBody>(*otherIt);
-			//			otherPos.local = otherPos.local.sumVector(Vector3D::localToWorldDirn(otherRb.massCenter.invert(), otherRb.transforMatrix));
-			//			if (otherRb.collider == nullptr) continue;
-			//			State b = { *otherIt, otherPos, otherRot, otherScale, &otherRb };
-			//			if (rb.collider->GetShape() == otherRb.collider->GetShape()) {
-			//				// Same Shape
-			//				switch (rb.collider->GetShape())
-			//				{
-			//				case components::Shape::Box: {
-			//					Collision* collision = IsBoxToBoxColliding(a, b);
-			//					if (collision != nullptr) {
-			//						collisions.push_back(collision);
-			//					}
-			//					break;
-			//				}
-			//				case components::Shape::Sphere: {
-			//					Collision* collision = IsColliding(a, b);
-			//					if (collision != nullptr) {
-			//						collisions.push_back(collision);
-			//					}
-			//					break;
-			//				}
-			//				default:
-			//					break;
-			//				}
-			//			}
-			//			else {
-			//				Collision* collision = nullptr;
-			//				if (a.rb->collider->GetShape() == Shape::Box && b.rb->collider->GetShape() == Shape::Sphere) {
-			//					collision = IsBoxToSphereColliding(a, b);
-			//				}
-			//				else if (a.rb->collider->GetShape() == Shape::Box && b.rb->collider->GetShape() == Shape::Sphere) {
-			//					collision = IsBoxToSphereColliding(b, a);
-			//				}
-
-			//				if (collision != nullptr) {
-			//					collisions.push_back(collision);
-			//				}
-			//			}
-			//		}
-			//		// v�rifie si collision avec le sol
-			//		float groundPenetration = FLT_MAX;
-			//		switch (rb.collider->GetShape())
-			//		{
-			//		case Shape::Sphere:
-			//			groundPenetration = pos.local.y - ((SphereCollider*)rb.collider)->GetSphereData().radius;
-			//			break;
-			//		case Shape::Box:{
-			//			BoxData box = ((BoxCollider*)rb.collider)->shapeData;
-			//			box.min = box.min.VectorMultiplication(Vector3D(scale.x, scale.y, scale.z));
-			//			box.max = box.max.VectorMultiplication(Vector3D(scale.x, scale.y, scale.z));
-			//			groundPenetration = pos.local.y - box.max.y;
-			//			break; }
-			//		default:
-			//			groundPenetration = FLT_MAX;
-			//			break;
-			//		}
-			//		
-			//		
-			//		if (groundPenetration <= 0) {
-			//			// Collision with ground
-			//			entt::entity entites[2] = { *it, (entt::entity)-1 };
-			//			RigidBody* rigidbodies[2] = { &rb, nullptr };
-			//			groundPenetration = abs(groundPenetration);
-			//			collisions.push_back(new Collision(entites, rigidbodies, rb.restitutionCoef, abs(groundPenetration), Vector3D(0, 1, 0)));
-			//		}
-			//	}
-			// test resolve octree
-			//resolver.resolveCollisions(collisions, delta);
-
+			// Si il y a au moins une collision on stop l'éxécution de notre boucle physique
 			if (colRegistry.size() > 0 && Physics::doPhysicsStep) Physics::doPhysicsStep = false;
+
+			// résoudre les collisions
 			colRegistry.Resolve();
 		}
-		// check sphere to sphere collision
-		Collision* IsColliding(State a, State b) {
-			SphereData aSphere = ((SphereCollider*)a.rb->collider)->GetSphereData();
-			SphereData bSphere = ((SphereCollider*)b.rb->collider)->GetSphereData();
-			Vector3D dir = a.pos.local.subVector(b.pos.local); // vecteur de direction (B vers A)
-			float distance = abs(dir.magnitude()); //  distance absolue entre les deux particules
-			float closestDistance = aSphere.radius + bSphere.radius; // plus proche distance possible
-			if (distance <= closestDistance) {
-				// collision
-				entt::entity entites[2] = { a.entity, b.entity };
-				RigidBody* rigidbodies[2] = { a.rb, b.rb };
-				float restitutionCoef = 1;
-				if (a.rb->restitutionCombine == b.rb->restitutionCombine) {
-					restitutionCoef = (a.rb->restitutionCoef + b.rb->restitutionCoef) / 2;
-				}
 
-				float penetration = closestDistance - distance;
-
-				std::cout << std::to_string(penetration) << std::endl;
-				// on normalise le vecteur de direction
-				;
-
-				return new Collision(entites, rigidbodies, restitutionCoef, penetration, dir.normalize());
-			}
-			// No collision
-			return nullptr;
-		}
-		struct AABB
-		{
-			Vector3D min;
-			Vector3D max;
-		};
-		struct OBB {
-			Vector3D vertex[8];
-			OBB(RigidBody rb) {
-				BoxData aBox = ((BoxCollider*)rb.collider)->GetBoxData();
-				vertex[0] = Vector3D(aBox.min.x, aBox.min.y, aBox.min.z);
-				vertex[1] = Vector3D(aBox.min.x, aBox.min.y, aBox.max.z);
-				vertex[2] = Vector3D(aBox.min.x, aBox.max.y, aBox.min.z);
-				vertex[3] = Vector3D(aBox.min.x, aBox.max.y, aBox.max.z);
-				vertex[4] = Vector3D(aBox.max.x, aBox.min.y, aBox.min.z);
-				vertex[5] = Vector3D(aBox.max.x, aBox.min.y, aBox.max.z);
-				vertex[6] = Vector3D(aBox.max.x, aBox.max.y, aBox.min.z);
-				vertex[7] = Vector3D(aBox.max.x, aBox.max.y, aBox.max.z);
-				for (int i = 0; i < 8; i++) vertex[i] = Matrix4().localToWorld(vertex[i], rb.transforMatrix);
-			}
-			//Vector3D c; // OBB center point
-			//Vector3D u[3];
-			//Scale e;
-			//OBB(State state) : c(state.pos.local), e(state.scale){
-			//	u[0] = Vector3D(state.rb->transforMatrix.data[0], state.rb->transforMatrix.data[1], state.rb->transforMatrix.data[2]);
-			//	u[1] = Vector3D(state.rb->transforMatrix.data[4], state.rb->transforMatrix.data[5], state.rb->transforMatrix.data[6]);
-			//	u[2] = Vector3D(state.rb->transforMatrix.data[8], state.rb->transforMatrix.data[9], state.rb->transforMatrix.data[10]);
-			//}
-		};
-		//Given point p, return the point q on or in AABB b that is closest to p
-		Vector3D ClosestPtPointAABB(Vector3D p, AABB box)
-		{
-			Vector3D q;
-			// For each coordinate axis, if the point coordinate value is
-			// outside box, clamp it to the box, else keep it as is
-			float v = p.x;
-			if (v < box.min.x) v = box.min.x;
-			if (v > box.max.x) v = box.max.x;
-			q.x = v;
-			v = p.y;
-			if (v < box.min.y) v = box.min.y;
-			if (v > box.max.y) v = box.max.y;
-			q.y = v;
-			v = p.z;
-			if (v < box.min.z) v = box.min.z;
-			if (v > box.max.z) v = box.max.z;
-			q.z = v;
-			return q;
-		}
-
-		Vector3D GetNormalAABBAABB(Vector3D vec) {
-			Vector3D vecAbs = Vector3D(abs(vec.x), abs(vec.y), abs(vec.z));
-			if (vecAbs.x > vecAbs.y && vecAbs.x > vecAbs.z) {
-				return Vector3D(vec.x, 0, 0).normalize();
-			}
-			if (vecAbs.y > vecAbs.x && vecAbs.y > vecAbs.z) {
-				return Vector3D(0, vec.y, 0).normalize();
-			}
-			if (vecAbs.z > vecAbs.x && vecAbs.z > vecAbs.y) {
-				return Vector3D(0, 0, vec.z).normalize();
-			}
-		}
-
+		// calcule la distance entre un point et un plan par rapport a sa normale
 		float DistanceWithPlane(Vector3D point, Vector3D normal, Vector3D planePosition) {
 			float offset = -normal.scalarProduct(planePosition);
 			float scalar = normal.scalarProduct(point);
@@ -257,6 +112,7 @@ namespace team4_game_engine::systems {
 			return result;
 		}
 
+		// Vérifie si il y a bien une collision entre un cube et un plan
 		CollisionData* IsBoxToPlaneColliding(entt::entity cube, entt::entity plane) {
 			RigidBody& rbCube = engine::Engine::Instance().GetWorld().lock()->Registry().get<RigidBody>(cube);
 			RigidBody& rbPlane = engine::Engine::Instance().GetWorld().lock()->Registry().get<RigidBody>(plane);
@@ -267,8 +123,10 @@ namespace team4_game_engine::systems {
 			float maxDistance = 0;
 			std::vector<Contact*> verticesIndex = std::vector<Contact*>();
 			float maxVertexIndex = 0;
+			// boucle sur les 8 sommet du cube
 			while (i < 8) {
 				float distance = DistanceWithPlane(aOBB.vertex[i], Matrix4().localToWorldDirn(bPlane.normal, rbPlane.transforMatrix), posPlane.local);
+				// Si le sommet est derrière le plan par rapport a la direction de la normale
 				if(distance < 0) {
 					verticesIndex.push_back(new Contact(
 						aOBB.vertex[i],
@@ -278,110 +136,14 @@ namespace team4_game_engine::systems {
 				}
 				i++;
 			}
+			// Si il y a au moins une collision avec un sommet alors on retourne les données de la collision
 			if (verticesIndex.size()) {
 				return new CollisionData(verticesIndex, cube, plane);
 			}
 			return nullptr;
 		}
-
-		// check box to box
-		Collision* IsBoxToBoxColliding(State a, State b) {
-			BoxData aBox = ((BoxCollider*)a.rb->collider)->GetBoxData();
-			aBox.min = aBox.min.VectorMultiplication(Vector3D(a.scale.x, a.scale.y, a.scale.z));
-			aBox.max = aBox.max.VectorMultiplication(Vector3D(a.scale.x, a.scale.y, a.scale.z));
-			BoxData bBox = ((BoxCollider*)b.rb->collider)->GetBoxData();
-			bBox.min = bBox.min.VectorMultiplication(Vector3D(b.scale.x, b.scale.y, b.scale.z));
-			bBox.max = bBox.max.VectorMultiplication(Vector3D(b.scale.x, b.scale.y, b.scale.z));
-			if (a.pos.local.x < b.pos.local.x + bBox.max.x * 2 &&
-				a.pos.local.x + aBox.max.x * 2 > b.pos.local.x &&
-				a.pos.local.y < b.pos.local.y + bBox.max.y * 2 &&
-				a.pos.local.y + aBox.max.y * 2 > b.pos.local.y &&
-				a.pos.local.z < b.pos.local.z + bBox.max.z * 2 &&
-				a.pos.local.z + aBox.max.z * 2 > b.pos.local.z)
-			{
-				
-				// collision
-				entt::entity entites[2] = { a.entity, b.entity };
-				RigidBody* rigidbodies[2] = { a.rb, b.rb };
-				Vector3D pointtoA = ClosestPtPointAABB(a.pos.local, { bBox.min.sumVector(b.pos.local), bBox.max.sumVector(b.pos.local) });
-				Vector3D pointToB = ClosestPtPointAABB(b.pos.local, { aBox.min.sumVector(a.pos.local), aBox.max.sumVector(a.pos.local) });
-				Vector3D dir = GetNormalAABBAABB(a.pos.local.subVector(b.pos.local));
-				float restitutionCoef = 1;
-				if (a.rb->restitutionCombine == b.rb->restitutionCombine) {
-					restitutionCoef = (a.rb->restitutionCoef + b.rb->restitutionCoef) / 2;
-				}
-				float penetration = pointtoA.VectorMultiplication(dir).subVector(pointToB.VectorMultiplication(dir)).magnitude();
-				return new Collision(entites, rigidbodies, restitutionCoef, penetration, dir.normalize());
-			}
-			return nullptr;
-		}
-
-		// Returns the squared distance between a point p and an AABB b
-		float SqDistPointAABB(Vector3D p, AABB box)
-		{
-			float sqDist = 0.0f;
-			float v = p.x;
-			if (v < box.min.x) sqDist += (box.min.x - v) * (box.min.x - v);
-			if (v > box.max.x) sqDist += (v - box.max.x) * (v - box.max.x);
-			v = p.y;
-			if (v < box.min.y) sqDist += (box.min.y - v) * (box.min.y - v);
-			if (v > box.max.y) sqDist += (v - box.max.y) * (v - box.max.y);
-			v = p.z;
-			if (v < box.min.z) sqDist += (box.min.z - v) * (box.min.z - v);
-			if (v > box.max.z) sqDist += (v - box.max.z) * (v - box.max.z);
-			return sqDist;
-		}
-
-		Collision* IsBoxToSphereColliding(State box, State sphere) {
-			BoxData boxData = ((BoxCollider*)box.rb->collider)->GetBoxData();
-			boxData.min = boxData.min.VectorMultiplication(Vector3D(box.scale.x, box.scale.y, box.scale.z));
-			boxData.max = boxData.max.VectorMultiplication(Vector3D(box.scale.x, box.scale.y, box.scale.z));
-			SphereData sphereData = ((SphereCollider*)sphere.rb->collider)->GetSphereData();
-			Vector3D point = ClosestPtPointAABB(sphere.pos.local, { boxData.min.sumVector(box.pos.local), boxData.max.sumVector(box.pos.local) });
-			Vector3D dir = point.subVector(sphere.pos.local);
-			float dist = dir.magnitude();
-			if (dist <= sphereData.radius) {
-				float penetration = sphereData.radius - dist;
-				// collision
-				entt::entity entites[2] = { box.entity, sphere.entity };
-				RigidBody* rigidbodies[2] = { box.rb, sphere.rb };
-				float restitutionCoef = 1.0f;
-				if (box.rb->restitutionCombine == sphere.rb->restitutionCombine) {
-					restitutionCoef = (sphere.rb->restitutionCoef + box.rb->restitutionCoef) / 2;
-				}
-				return new Collision(entites, rigidbodies, restitutionCoef, penetration, dir.normalize());
-			}
-			return nullptr;
-		}
-
-		/*Collision* IsBoxToSphereColliding(State box, State sphere) {
-			BoxData boxData = ((BoxCollider*)box.rb->collider)->GetBoxData();
-			SphereData sphereData = ((SphereCollider*)sphere.rb->collider)->GetSphereData();
-			// Find point p on AABB closest to sphere center
-			Vector3D  point = ClosestPtPointAABB(sphere.pos.local, boxData);
-			Vector3D dist = point.subVector(sphere.pos.local);
-			// Sphere and AABB intersect if the (squared) distance between them is
-			// less than the (squared) sphere radius.
-			if (dist.scalarProduct(dist) <= sphereData.radius * sphereData.radius) {
-				// collision
-				entt::entity entites[2] = { box.entity, sphere.entity };
-				RigidBody* rigidbodies[2] = { box.rb, sphere.rb };
-				Vector3D dir = box.pos.local.subVector(sphere.pos.local).normalize();
-				float restitutionCoef = 1;
-				if (box.rb->restitutionCombine == sphere.rb->restitutionCombine) {
-					restitutionCoef = (sphere.rb->restitutionCoef + box.rb->restitutionCoef) / 2;
-				}
-				float penetration = 0.0025f;
-				return new Collision(entites, rigidbodies, restitutionCoef, penetration, dir);
-			}
-			else {
-				return nullptr;
-			}
-		}*/
 	private:
 		std::chrono::milliseconds m_totalMilli = 0ms;
-		std::vector<Collision*> collisions;
-		CollisionResolver resolver;
 		CollisionRegistry colRegistry;
 
 	};

@@ -128,7 +128,6 @@ namespace team4_game_engine::debug {
 			}
 			});
 		//ImGui Debug Window
-		//SceneDebugWindow();
 		Inspector();
 		Hierachy();
 		PhysicsDebugWindow();
@@ -162,238 +161,8 @@ namespace team4_game_engine::debug {
 			ImGui::DragInt("Time Step per second", &Physics::physicsStepPerSecond, 1, 100);
 			Physics::physicsStepTime = (float)1 / (float)Physics::physicsStepPerSecond;
 		}
-		//if(ImGui::ImageButton("physics_start_stop", ))
 		ImGui::End();
 	}
-
-	//void DearImGuiOverlay::SceneDebugWindow() {
-	//	auto& camera = team4_game_engine::engine::SceneView::Instance().GetMainCameraComponent();
-	//	ImGui::SetNextWindowPos(ImVec2(io.DisplaySize.x - io.DisplaySize.x / 5, 0));
-	//	ImGui::SetNextWindowSize(ImVec2(io.DisplaySize.x / 5, io.DisplaySize.x / 4));
-	//	ImGui::Begin("Debug", (bool*)false, ImGuiWindowFlags_NoSavedSettings);
-	//	if (ImGui::CollapsingHeader("Instantiation"))
-	//	{
-	//		if (ImGui::BeginCombo("##combo2", Renderer3D::Instance().ms_meshs[selectedMesh]->m_name.c_str())) // The second parameter is the label previewed before opening the combo.
-	//		{
-	//			for (int i = 0; i < Renderer3D::Instance().ms_meshs.size(); i++) {
-	//				bool is_selected = (selectedMesh == i); // You can store your selection however you want, outside or inside your objects
-	//				if (ImGui::Selectable(Renderer3D::Instance().ms_meshs[i]->m_name.c_str(), is_selected))
-	//					selectedMesh = i;
-	//				if (is_selected)
-	//					ImGui::SetItemDefaultFocus();   // You may set the initial focus when opening the combo (scrolling + for keyboard navigation support)
-	//			}
-	//			ImGui::EndCombo();
-	//		}
-	//		// Instantiation
-	//		if (ImGui::Button("Instanciate Mesh")) {
-	//			Instantiate(entt::null);
-	//		}
-	//		//ImGui::SameLine();
-	//		//ImGui::Checkbox("Spawn continusly", &continuslySpawn);
-	//		ImGui::Separator();
-	//		// Initial Particule data
-	//		if (ImGui::TreeNode("Position")) {
-	//			if (!randomPos)
-	//				ImGui::DragFloat3("Initial Position", &initialPosition[0]);
-	//			else
-	//				ImGui::DragFloatRange2("Min / Max Random Position", &minMaxPos.x, &minMaxPos.y, 0.1f, ImGuiSliderFlags_ClampOnInput);
-	//			ImGui::Checkbox("Random Position", &randomPos);
-	//			ImGui::TreePop();
-	//		}
-	//		if (ImGui::TreeNode("Velocity")) {
-	//			if (!randomVel)
-	//				ImGui::DragFloat3("Initial Velocity", &initialVelocity[0]);
-	//			else
-	//				ImGui::DragFloatRange2("Min / Max Random Velocity", &minMaxVel.x, &minMaxVel.y, 0.1f, ImGuiSliderFlags_ClampOnInput);
-	//			ImGui::Checkbox("Random Velocity", &randomVel);
-	//			ImGui::TreePop();
-	//		}
-	//		if (ImGui::TreeNode("Color")) {
-	//			ImGui::ColorEdit3("Point Color", &particule_color.x);
-	//			ImGui::TreePop();
-	//		}
-	//		if (ImGui::TreeNode("Radius")) {
-	//			if (useRandomRadius)
-	//				ImGui::DragFloatRange2("Min / Max Random Radius", &minRadius, &maxRadius, 0.1f, 0.1f, FLT_MAX, "%.3f", 0, ImGuiSliderFlags_ClampOnInput);
-	//			else
-	//				ImGui::DragFloat("Radius", &radius, 0.1f, 0.1f, FLT_MAX);
-	//			ImGui::Checkbox("Random Radius", &useRandomRadius);
-	//			ImGui::TreePop();
-	//		}
-	//		if (ImGui::TreeNode("Physique")) {
-	//			if (ImGui::TreeNode("Mass")) {
-	//				if (scaleWithSize) {
-	//					ImGui::DragFloat("Size factor (radius * factor)", &scaleFactor, 0.01f, FLT_MAX);
-	//				}
-	//				else
-	//				{
-	//					if (useRandomRadius)
-	//						ImGui::DragFloatRange2("Min / Max Random Radius", &minMass, &maxMass, 0.1f, 0, FLT_MAX, "%.3f", 0, ImGuiSliderFlags_ClampOnInput);
-	//					else
-	//						ImGui::DragFloat("Mass", &mass, 0.01f, FLT_MAX);
-	//					ImGui::Checkbox("Random Mass", &useRandomMass);
-	//				}
-	//				ImGui::Checkbox("Scale With Size", &scaleWithSize);
-	//				ImGui::TreePop();
-	//			}
-	//			if (ImGui::TreeNode("Restitution")) {
-	//				ImGui::Checkbox("Random Restitution", &useRandomRestitution);
-	//				if (!useRandomRestitution)
-	//					ImGui::DragFloat("Restitution", &restitution, 0.1f, 0.f, 1.f);
-	//				ImGui::TreePop();
-	//			}
-	//			ImGui::TreePop();
-	//		}
-	//		ImGui::Separator();
-	//		for (int n = 0; n < IM_ARRAYSIZE(forceOpened); n++)
-	//		{
-	//			if (n > 0) { ImGui::SameLine(); }
-	//			ImGui::Checkbox(forceNames[n], &forceOpened[n]);
-	//		}
-	//		// Forces Tabs
-	//		if (ImGui::BeginTabBar("ForcesTabs", ImGuiTabBarFlags_AutoSelectNewTabs))
-	//		{
-	//			for (int n = 0; n < IM_ARRAYSIZE(forceOpened); n++) {
-	//				if (forceOpened[n] && ImGui::BeginTabItem(forceNames[n], &forceOpened[n], ImGuiTabItemFlags_None))
-	//				{
-	//					switch (n)
-	//					{
-	//					case 0:
-	//						ImGui::DragFloat3("Scene Gravity", &gravityForceVector.x, 0.1f);
-	//						break;
-	//					case 1:
-	//						// Drag Value
-	//						ImGui::Checkbox("Random drag", &useRandomDrag);
-	//						if (useRandomDrag) {
-	//							ImGui::DragFloatRange2("Min / Max Random Drag", &minDrag, &maxDrag, 0.1f, 0, FLT_MAX, "%.3f", 0, ImGuiSliderFlags_ClampOnInput);
-	//						}
-	//						else {
-	//							ImGui::SliderFloat("Drag", &drag, 0, 1);
-	//						}
-	//						break;
-	//					case 2:
-	//						//
-	//						ImGui::RadioButton("Anchored Spring", &useSpringType, 0); ImGui::SameLine();
-	//						ImGui::RadioButton("Basic Spring", &useSpringType, 1); ImGui::SameLine();
-	//						ImGui::RadioButton("Elasticity", &useSpringType, 2); ImGui::SameLine();
-	//						ImGui::RadioButton("Stiff Spring", &useSpringType, 3);
-	//						if (useSpringType == 0 || useSpringType == 3) ImGui::DragFloat3("Anchore Position", &anchorPosition.x);
-	//						ImGui::DragFloat("Stiffness", &stiffness);
-	//						if (useSpringType == 3) {
-	//							ImGui::DragFloat("Damping", &damping, 0.01f);
-	//						}
-	//						else {
-	//							ImGui::DragFloat("Rest Length	", &restLength);
-	//						}
-	//						break;
-	//					case 3:
-	//						ImGui::DragFloat("Maximum Depth", &maxDepth);
-	//						ImGui::DragFloat("Volume", &volume);
-	//						ImGui::DragFloat("Water Height", &waterHeight);
-	//						ImGui::DragFloat("Liquid Density", &liquidDensity);
-	//						break;
-	//					default:
-	//						break;
-	//					}
-	//					ImGui::EndTabItem();
-	//				}
-	//			}
-	//			ImGui::EndTabBar();
-	//			ImGui::Separator();
-	//		}
-	//	}
-	//	if (ImGui::CollapsingHeader("Draw Settings")) {
-	//		// Draw Mode Selector
-	//		if (ImGui::BeginCombo("##combo", Draw_Modes[Renderer3D::Instance().ms_meshs[selectedMesh]->m_drawMode].name)) // The second parameter is the label previewed before opening the combo.
-	//		{
-	//			for (int n = 0; n < IM_ARRAYSIZE(Draw_Modes); n++)
-	//			{
-	//				bool is_selected = (Renderer3D::Instance().ms_meshs[selectedMesh]->m_drawMode == n); // You can store your selection however you want, outside or inside your objects
-	//				if (ImGui::Selectable(Draw_Modes[n].name, is_selected))
-	//					Renderer3D::Instance().ms_meshs[selectedMesh]->m_drawMode = n;
-	//				if (is_selected)
-	//					ImGui::SetItemDefaultFocus();   // You may set the initial focus when opening the combo (scrolling + for keyboard navigation support)
-	//			}
-	//			ImGui::EndCombo();
-	//		}
-	//		int tempPointSize = pointSize;
-	//		ImGui::SliderInt("Point Size", &tempPointSize, 1, 20);
-	//		if (tempPointSize != pointSize) {
-	//			pointSize = tempPointSize;
-	//			glPointSize(pointSize);
-	//		}
-	//	}
-	//	if (ImGui::CollapsingHeader("Camera Settings")) {
-	//		ImGui::SliderFloat("FOV", &camera.FOV, 1, 180);
-	//		ImGui::DragFloatRange2("Near & Far Clip", &camera.nearClip, &camera.farClip, 0.25f, 0.1f, FLT_MAX, nullptr, nullptr, ImGuiSliderFlags_ClampOnInput);
-	//		float distanceTemp = distance;
-	//		ImGui::DragFloat("Distance from center", &distanceTemp, 1, 0, FLT_MAX);
-	//		//Update Distance
-	//		if (distanceTemp != distance) {
-	//			float gap = distance - distanceTemp;
-	//			distance = distance;
-	//			if (distanceTemp > 0 || distanceTemp < FLT_MAX) {
-	//				float* mat = glm::value_ptr(camera.view);
-	//				//https://i.stack.imgur.com/KW71r.jpg
-	//				camera.view = glm::translate(camera.view, glm::vec3(mat[2], mat[6], mat[10]) * gap);
-	//			}
-	//			distance = distanceTemp;
-	//		}
-	//		ImGui::ColorEdit3("Background Color", &camera.backgroundColor.x); // Edit 3 floats representing a color
-	//		ImGui::Checkbox("Show Grid", &showGrid);
-	//	}
-	//	if (ImGui::CollapsingHeader("Debug"))
-	//	{
-	//		ImGui::Checkbox("Show Debug Text", &showDebugText);
-	//		ImGui::Checkbox("Show Debug Ray", &showDebugRay);
-	//		ImGui::Checkbox("Show Debug Tools", &showDebugTools);
-	//	}
-	//	//Framerate
-	//	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-	//	ImGui::End();
-	//	// Debug Overlay
-	//	if (showDebugText || showDebugRay) {
-	//		ImGuiStyle& style = ImGui::GetStyle();
-	//		style.WindowBorderSize = 0.0f;
-	//		ImGui::SetNextWindowBgAlpha(0);
-	//		ImGui::SetNextWindowPos(ImVec2(0, 0));
-	//		ImGui::SetNextWindowSize(ImVec2(io.DisplaySize.x, io.DisplaySize.y));
-	//		ImGui::Begin("test", (bool*)false,
-	//			ImGuiWindowFlags_NoTitleBar |
-	//			ImGuiWindowFlags_NoResize |
-	//			ImGuiWindowFlags_NoMove |
-	//			ImGuiWindowFlags_NoDecoration |
-	//			ImGuiWindowFlags_NoScrollbar |
-	//			ImGuiWindowFlags_NoSavedSettings |
-	//			ImGuiWindowFlags_NoInputs);
-	//		ImDrawList* draw_list = ImGui::GetWindowDrawList();
-	//		auto world = Engine::Instance().GetWorld().lock();
-	//		for (auto entity : selected) {
-	//			if (!world->Registry().valid(entity)) world->Registry().destroy(entity);
-	//			Position position = world->Registry().get<Position>(entity);
-	//			RigidBody rb = world->Registry().get<RigidBody>(entity);
-	//			ImVec2 screenCoordinate = WorldToScreenCoordinate(glm::vec3(position.local.x, position.local.y, position.local.z));
-	//			if (showDebugText) {
-	//				std::string text = "Position " + position.local.GetVectorData() + "\n";
-	//				text += "Velocity " + rb.linearVelocity.GetVectorData() + "\n";
-	//				text += "Acceleration " + rb.accumulateLinearForces.GetVectorData() + "\n";
-	//				//text += "Mass " + std::to_string(particule->get()->GetMass()) + "\n";
-	//				//text += "Radius " + std::to_string(particule->get()->GetRadius()) + "\n";
-	//				//text += "Restitution " + std::to_string(particule->get()->GetRestitutionCoef()) + "\n";
-	//				ImVec2 debugTextCoord = screenCoordinate;
-	//				debugTextCoord.x += 25;
-	//				debugTextCoord.y -= 50;
-	//				DrawText(draw_list, text.c_str(), debugTextCoord);
-	//			}
-	//			if (showDebugRay) {
-	//				//ImVec2 velDirection = WorldToScreenCoordinate(glm::vec3(pos.x + vel.x, pos.y + vel.y, pos.z + vel.z));
-	//				//draw_list->AddLine(screenCoordinate, velDirection, IM_COL32(0, 0, 255, 75), pointSize);
-	//			}
-	//		}
-	//		ImGui::End();
-	//		style.WindowBorderSize = 1.0f;
-	//	}
-	//}
 
 	void DearImGuiOverlay::CreateBranche(entt::entity entity) {
 		std::shared_ptr<World> world = Engine::Instance().GetWorld().lock();
@@ -610,51 +379,6 @@ namespace team4_game_engine::debug {
 		}
 		ImGui::End();
 	}
-
-	// instantiate from tool
-	//void DearImGuiOverlay::Instantiate(entt::entity parent, int mesh) {
-	//	// Position
-	//	Vector3D  pos, vel;
-	//	if (randomPos)
-	//		pos = Vector3D::Random(minMaxPos.x, minMaxPos.y, minMaxPos.x, minMaxPos.y, minMaxPos.x, minMaxPos.y);
-	//	else
-	//		pos = Vector3D(initialPosition.x, initialPosition.y, initialPosition.z);
-	//	// Velocity
-	//	if (randomVel)
-	//		vel = Vector3D::Random(minMaxVel.x, minMaxVel.y, minMaxVel.x, minMaxVel.y, minMaxVel.x, minMaxVel.y);
-	//	else
-	//		vel = Vector3D(initialVelocity.x, initialVelocity.y, initialVelocity.z);
-	//	Instantiate(parent, mesh >= 0 ? mesh : selectedMesh, pos, vel);
-	//}
-
-	// instantiate with position & velocity defined
-	//void DearImGuiOverlay::Instantiate(entt::entity parent, int mesh, Vector3D  pos, Vector3D vel) {
-	//	Renderer3D& instance = Renderer3D::Instance();
-	//	std::weak_ptr<World> world = Engine::Instance().GetWorld();
-	//	Entity* entity = new Entity(*world.lock(), Renderer3D::Instance().ms_meshs[mesh]->m_name);
-	//	entity->GetComponent<Parent>().entity = parent;
-	//	if (parent != entt::null) {
-	//		world.lock()->Registry().get<Children>(parent).childrens.push_back(static_cast<entt::entity>(entity->EntityID()));
-	//	}
-	//	entity->Position() = Position(pos.x, pos.y, pos.z);
-	//	entity->AddComponent<Color>(particule_color.x, particule_color.y, particule_color.z);
-	//	//entity->AddComponent<BoxCollider>(glm::vec3(1,1,1));
-	//	auto& rb = entity->AddComponent<RigidBody>(
-	//		new SphereCollider(1),
-	//		mass,
-	//		useRandomRestitution ? engine::mathematics::RandomFloat(0, 1) : restitution,
-	//		useRandomDrag ? engine::mathematics::RandomFloat(minDrag, maxDrag) : drag,
-	//		1,
-	//		Matrix3(),
-	//		Vector3D(gravityForceVector.x, gravityForceVector.y, gravityForceVector.z),
-	//		true);
-	//	//auto& rb = entity->AddComponent<RigidBody>(entity->Position(), entity->AddComponent<SphereCollider>(1), mass);
-	//	rb.linearVelocity = vel;
-	//	auto meshs = std::vector<std::shared_ptr<team4_game_engine::renderer::Mesh>>();
-	//	meshs.push_back(instance.ms_meshs[mesh]);
-	//	entity->AddComponent<Model>(meshs);
-	//	instance.ms_meshs[mesh]->AddInstance(entity);
-	//}
 	// World position to screen coordinate
 	Vector3D DearImGuiOverlay::WorldToScreenCoordinate(glm::vec3 pos) {
 		glm::mat4 projection = team4_game_engine::engine::SceneView::Instance().GetProjection();
@@ -681,7 +405,7 @@ namespace team4_game_engine::debug {
 		entt::entity walls = static_cast<entt::entity>(engine::primitive::Empty("Walls", entt::null)->EntityID());
 		Entity* plane;
 		float planeSize = 10;
-		plane = engine::primitive::Plane("Ground", walls, 1);
+		plane = engine::primitive::Plane("ground", walls, 1);
 		//plane->Position() = { 0, 0, 0 };
 		plane->Scale() = { planeSize, planeSize, planeSize };
 
