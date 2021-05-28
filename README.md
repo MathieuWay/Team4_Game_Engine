@@ -1,3 +1,4 @@
+![preview](/preview.png)
 - Avoir Visual Studio 2019 + extension visual studio C++
 - Avoir CMake Version 3.10 minimum
 - Compiler le projet avec CMake
